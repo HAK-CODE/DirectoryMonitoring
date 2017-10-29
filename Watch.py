@@ -75,7 +75,7 @@ class Handler(FileSystemEventHandler):
                         "PATH  : "  +data[0] +
                         "\nNAME  : "+data[1] +
                         "\nCTIME : "+data[2] +
-                        "\nSIZE  : "+str(data[3])+"BYTES\n"+
+                        "\nSIZE  : "+str(data[3])+" BYTES\n"+
                         "---------------------------------------------------------------------------------")
             self.server.sendData(dataGram)
         else:
@@ -84,7 +84,7 @@ class Handler(FileSystemEventHandler):
                         "\nNAME  : " + data[1] +
                         "\nEXT   : " + data[2] +
                         "\nCTIME : " + data[3] +
-                        "\nSIZE  : " + str(data[4]) + "BYTES\n" +
+                        "\nSIZE  : " + str(data[4]) + " BYTES\n" +
                         "---------------------------------------------------------------------------------")
             self.server.sendData(dataGram)
 
