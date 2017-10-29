@@ -8,6 +8,8 @@ from   watchdog.observers import Observer
 import time
 from   fileInfo import FILE_INFO
 from   directoryInfo import PATH_INFO_PROVIDER
+from server import TCPSERVER
+from os import linesep
 
 '''
 An event handler that use to listen triggered events from FileSystemEvent
@@ -34,25 +36,31 @@ Returns:
 
 class Handler(FileSystemEventHandler):
     content = []
+    server = None
     with open('ignore.txt') as f:
         content = f.readlines()
 
-    @staticmethod
-    def on_created(event):
+    def attachServer(self, server_status):
+        if(server_status == True):
+            self.server = TCPSERVER('192.168.1.102', 5005, 1024)
+            self.server.sendData('Connect to server on port '+str(self.server.TCP_PORT))
+
+    def on_created(self, event):
         PATH = event.src_path
         if PATH not in Handler.content:
             #Check if a event is generated for directory or not
             if event.is_directory == True:
                 DIR = PATH_INFO_PROVIDER(PATH)
+                self.send_info(DIR.DIRBASIC(), True)
                 print('----------------------------- NEW DIRECTORY CREATED -----------------------------')
                 print("PATH  : ", DIR.DIRBASIC()[0])
                 print("NAME  : ", DIR.DIRBASIC()[1])
                 print("CTIME : ", DIR.DIRBASIC()[2])
-                print("ATIME : ", DIR.DIRATIME())
                 print("SIZE  : ", DIR.DIRBASIC()[3], "BYTES")
                 print('---------------------------------------------------------------------------------')
             else:
                 FILE = FILE_INFO(event.src_path)
+                self.send_info(FILE.FILEBASIC(), False)
                 print('-------------------------------- NEW FILE CREATED -------------------------------')
                 print("PATH  : ", FILE.FILEBASIC()[0])
                 print("NAME  : ", FILE.FILEBASIC()[1])
@@ -61,14 +69,38 @@ class Handler(FileSystemEventHandler):
                 print("SIZE  : ", FILE.FILEBASIC()[4], "BYTES")
                 print('---------------------------------------------------------------------------------')
 
+    def send_info(self, data, DIR=False):
+        if DIR == True:
+            dataGram = ("\n----------------------------- NEW DIRECTORY CREATED -----------------------------\n"
+                        "PATH  : "  +data[0] +
+                        "\nNAME  : "+data[1] +
+                        "\nCTIME : "+data[2] +
+                        "\nSIZE  : "+str(data[3])+"BYTES\n"+
+                        "---------------------------------------------------------------------------------")
+            self.server.sendData(dataGram)
+        else:
+            dataGram = ("\n-------------------------------- NEW FILE CREATED -------------------------------\n"
+                        "PATH  : " + data[0] +
+                        "\nNAME  : " + data[1] +
+                        "\nEXT   : " + data[2] +
+                        "\nCTIME : " + data[3] +
+                        "\nSIZE  : " + str(data[4]) + "BYTES\n" +
+                        "---------------------------------------------------------------------------------")
+            self.server.sendData(dataGram)
 
 class Watcher:
     DIRECTORY = ""
-    def __init__(self, DIRECTORY):
+    SERVER = False
+    def __init__(self, DIRECTORY, SERVER = False):
         self.DIRECTORY = DIRECTORY
+        if SERVER != False:
+            self.SERVER = True
+
 
     def run(self):
         event_handler = Handler()
+        if self.SERVER != False:
+            event_handler.attachServer(self.SERVER)
         observer = Observer()
         observer.schedule(event_handler, self.DIRECTORY, recursive=True)
         observer.start()
