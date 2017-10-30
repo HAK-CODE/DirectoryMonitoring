@@ -3,13 +3,13 @@ author: HAK
 time  : 10:00 PM, 28/10/2017
 '''
 
-from   watchdog.events import FileSystemEventHandler
-from   watchdog.observers import Observer
-import time
-from   fileInfo import FILE_INFO
-from   directoryInfo import PATH_INFO_PROVIDER
-from server import TCPSERVER
-from os import linesep
+from     watchdog.events    import FileSystemEventHandler
+from     watchdog.observers import Observer
+import   time
+from     fileInfo           import FILE_INFO
+from     directoryInfo      import PATH_INFO_PROVIDER
+from     server             import TCPSERVER
+import   configparser
 
 '''
 An event handler that use to listen triggered events from FileSystemEvent
@@ -37,13 +37,20 @@ Returns:
 class Handler(FileSystemEventHandler):
     content = []
     server = None
+    serverConfig = {}
     with open('ignore.txt') as f:
         content = f.readlines()
 
+
     def attachServer(self, server_status):
         if(server_status == True):
-            self.server = TCPSERVER('192.168.1.102', 5005, 1024)
+            config = configparser.ConfigParser()
+            config.sections()
+            config.read('server.ini')
+            topSecret = config['hak.server.com']
+            self.server = TCPSERVER(topSecret['IP'], int(topSecret['Port']), int(topSecret['Buffer']))
             self.server.sendData('Connect to server on port '+str(self.server.TCP_PORT))
+
 
     def on_created(self, event):
         PATH = event.src_path
@@ -51,7 +58,8 @@ class Handler(FileSystemEventHandler):
             #Check if a event is generated for directory or not
             if event.is_directory == True:
                 DIR = PATH_INFO_PROVIDER(PATH)
-                self.send_info(DIR.DIRBASIC(), True)
+                if self.server != None:
+                    self.send_info(DIR.DIRBASIC(), True)
                 print('----------------------------- NEW DIRECTORY CREATED -----------------------------')
                 print("PATH  : ", DIR.DIRBASIC()[0])
                 print("NAME  : ", DIR.DIRBASIC()[1])
@@ -60,7 +68,8 @@ class Handler(FileSystemEventHandler):
                 print('---------------------------------------------------------------------------------')
             else:
                 FILE = FILE_INFO(event.src_path)
-                self.send_info(FILE.FILEBASIC(), False)
+                if self.server != None:
+                    self.send_info(FILE.FILEBASIC(), False)
                 print('-------------------------------- NEW FILE CREATED -------------------------------')
                 print("PATH  : ", FILE.FILEBASIC()[0])
                 print("NAME  : ", FILE.FILEBASIC()[1])
@@ -80,7 +89,7 @@ class Handler(FileSystemEventHandler):
             self.server.sendData(dataGram)
         else:
             dataGram = ("\n-------------------------------- NEW FILE CREATED -------------------------------\n"
-                        "PATH  : " + data[0] +
+                        "PATH  : "   + data[0] +
                         "\nNAME  : " + data[1] +
                         "\nEXT   : " + data[2] +
                         "\nCTIME : " + data[3] +
