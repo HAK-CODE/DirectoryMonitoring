@@ -101,6 +101,7 @@ class Handler(FileSystemEventHandler):
 class Watcher:
     DIRECTORY = ""
     SERVER = False
+
     def __init__(self, DIRECTORY, SERVER = False):
         self.DIRECTORY = DIRECTORY
         if SERVER != False:
