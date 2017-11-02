@@ -18,6 +18,7 @@ args = parser.parse_args()
 DIRECTORY_NAME = re.sub('[\'\"]','',args.path)
 DIR_INFO = PATH_INFO_PROVIDER(DIRECTORY_NAME)
 
+
 if DIR_INFO.ISDIR() == True:
     if(args.s):
         print("Binding Server...")
