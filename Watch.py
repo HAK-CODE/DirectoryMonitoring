@@ -54,6 +54,7 @@ class Handler(FileSystemEventHandler):
 
     def on_created(self, event):
         PATH = event.src_path
+        print("Path is : "+PATH)
         if PATH not in Handler.content:
             #Check if a event is generated for directory or not
             if event.is_directory == True:

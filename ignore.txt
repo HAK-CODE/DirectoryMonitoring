@@ -3,3 +3,5 @@ C:\Users\Hammad Ali Khan\Desktop\Python Directory\.idea\workspace.xml___jb_tmp__
 C:\Users\Hammad Ali Khan\Desktop\Python Directory\.git\index.lock
 /home/inbox-dih/Desktop/DirectoryMonitoring/.idea/workspace.xml___jb_tmp___
 /home/inbox-dih/Desktop/DirectoryMonitoring/.git/index.lock
+/home/inbox-dih/Desktop/DirectoryMonitoring/.idea/workspace.xml___jb_tmp___
+/home/inbox-dih/Desktop/DirectoryMonitoring/.git/index.lock
