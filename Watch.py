@@ -10,6 +10,8 @@ from     fileInfo           import FILE_INFO
 from     directoryInfo      import PATH_INFO_PROVIDER
 from     server             import TCPSERVER
 import   configparser
+import   subprocess
+import os
 
 '''
 An event handler that use to listen triggered events from FileSystemEvent
@@ -51,6 +53,8 @@ class Handler(FileSystemEventHandler):
             self.server = TCPSERVER(topSecret['IP'], int(topSecret['Port']), int(topSecret['Buffer']))
             self.server.sendData('Connect to server on port '+str(self.server.TCP_PORT))
 
+    def on_modified(self, event):
+        print("Modified "+event.src_path)
 
     def on_created(self, event):
         PATH = event.src_path
@@ -69,6 +73,9 @@ class Handler(FileSystemEventHandler):
                 print('---------------------------------------------------------------------------------')
             else:
                 FILE = FILE_INFO(event.src_path)
+                #subprocess.call(['C:/Users/Hammad Ali Khan/Anaconda3/python.exe', 'checkFilerelease.py', event.src_path])
+                commandExe = 'start python '+'checkFilerelease.py'+' '+event.src_path
+                os.system(commandExe)
                 if self.server != None:
                     self.send_info(FILE.FILEBASIC(), False)
                 print('-------------------------------- NEW FILE CREATED -------------------------------')
@@ -84,7 +91,7 @@ class Handler(FileSystemEventHandler):
             dataGram = ("\n----------------------------- NEW DIRECTORY CREATED -----------------------------\n"
                         "PATH  : "  +data[0] +
                         "\nNAME  : "+data[1] +
-                        "\nCTIME : "+data[2] +
+                       "\nCTIME : "+data[2] +
                         "\nSIZE  : "+str(data[3])+" BYTES\n"+
                         "---------------------------------------------------------------------------------")
             self.server.sendData(dataGram)
