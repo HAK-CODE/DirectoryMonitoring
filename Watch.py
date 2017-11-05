@@ -10,7 +10,6 @@ from     fileInfo           import FILE_INFO
 from     directoryInfo      import PATH_INFO_PROVIDER
 from     server             import TCPSERVER
 import   configparser
-import   subprocess
 import os
 
 '''
