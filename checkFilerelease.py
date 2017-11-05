@@ -6,10 +6,12 @@ time  : 11:00 PM, 05/11/2017
 import os, time
 import sys
 
-print('Process id',str(os.getpid()))
+#Get process id
+print('Process id is',str(os.getpid()))
 filepath = sys.argv[1]
 fileObj = None
 
+#keep running untill a process releases file
 while True:
     time.sleep(3)
     if os.path.exists(filepath):
