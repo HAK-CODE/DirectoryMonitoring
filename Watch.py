@@ -73,7 +73,6 @@ class Handler(FileSystemEventHandler):
                 print('---------------------------------------------------------------------------------')
             else:
                 FILE = FILE_INFO(event.src_path)
-                #subprocess.call(['C:/Users/Hammad Ali Khan/Anaconda3/python.exe', 'checkFilerelease.py', event.src_path])
                 commandExe = 'start python '+'checkFilerelease.py'+' '+event.src_path
                 os.system(commandExe)
                 if self.server != None:
