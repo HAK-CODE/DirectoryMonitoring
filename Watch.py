@@ -10,7 +10,7 @@ from     fileInfo           import FILE_INFO
 from     directoryInfo      import PATH_INFO_PROVIDER
 from     server             import TCPSERVER
 import   configparser
-import os
+import   os
 
 '''
 An event handler that use to listen triggered events from FileSystemEvent
@@ -40,8 +40,7 @@ class Handler(FileSystemEventHandler):
     server = None
     serverConfig = {}
     with open('ignore.txt') as f:
-        content = f.readlines()
-
+        content = f.read().splitlines()
 
     def attachServer(self, server_status):
         if(server_status == True):
@@ -57,7 +56,6 @@ class Handler(FileSystemEventHandler):
 
     def on_created(self, event):
         PATH = event.src_path
-        print("Path is : "+PATH)
         if PATH not in Handler.content:
             #Check if a event is generated for directory or not
             if event.is_directory == True:
@@ -72,7 +70,8 @@ class Handler(FileSystemEventHandler):
                 print('---------------------------------------------------------------------------------')
             else:
                 FILE = FILE_INFO(event.src_path)
-                commandExe = 'start python '+'checkFilerelease.py'+' '+event.src_path
+                CHG_PATH = '\"'+event.src_path+'\"' if ' ' in event.src_path else event.src_path
+                commandExe = 'start python '+'checkFilerelease.py'+' '+CHG_PATH
                 os.system(commandExe)
                 if self.server != None:
                     self.send_info(FILE.FILEBASIC(), False)
