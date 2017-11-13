@@ -13,7 +13,7 @@ import ntpath
 headers = ['File Name', 'Timestamp']
 
 
-#Get process id
+#Get process id (Get the path for file check if its doe copying or downloading)
 #--------------------------------------------------------------------------------------------
 print('Process id is',str(os.getpid()))
 filepath = sys.argv[1]
@@ -25,18 +25,15 @@ fileObj = None
 #--------------------------------------------------------------------------------------------
 config = configparser.ConfigParser()
 config.sections()
-config.read('fileDistribution.ini')
+config.read('./Config/fileDistribution.ini')
 paths_list = [x[1] for x in config.items('hak.paths')]
 #--------------------------------------------------------------------------------------------
 
 
 #Csvs paths to put files
 #--------------------------------------------------------------------------------------------
-config = configparser.ConfigParser()
-config.sections()
-config.read('fileDistribution.ini')
 csv_list = [x[1] for x in config.items('hak.csv')]
-print(csv_list)
+#print(csv_list)
 #--------------------------------------------------------------------------------------------
 
 
@@ -74,7 +71,6 @@ def update_csv(path, timeoffile, pathName):
 #keep running untill a process releases file
 #---------------------------------------------------------------------------------------------
 while True:
-    time.sleep(3)
     if os.path.exists(filepath):
         try:
             fileObj = open(filepath, 'a')
@@ -102,13 +98,16 @@ while True:
                 elif ntpath.basename(newname).startswith('METER'):
                     copy(newname, paths_list[4])
                     update_csv(csv_list[4], filectime, paths_list[4] + '/' + ntpath.basename(newname))
+                    commandExe = 'start python ' + 'metercsvProcessing.py' + ' ' + '\"' + paths_list[4] + '/' + ntpath.basename(newname) + '\"'
+                    os.system(commandExe)
                 elif ntpath.basename(newname).startswith('INVERTER'):
                     copy(newname, paths_list[1])
                     update_csv(csv_list[1], filectime, paths_list[1] + '/' + ntpath.basename(newname))
-                    commandExe = 'start python ' + 'jsontocsvProcessing.py' + ' ' + '\"' + paths_list[1] + '/' + ntpath.basename(newname) + '\"'
+                    commandExe = 'start python ' + 'invertercsvProcessing.py' + ' ' + '\"' + paths_list[1] + '/' + ntpath.basename(newname) + '\"'
                     os.system(commandExe)
                 os.remove(newname)
                 break
+        time.sleep(3)
     else:
         print('file path not exist')
         sys.exit(0)

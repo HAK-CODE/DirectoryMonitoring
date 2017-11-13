@@ -3,7 +3,6 @@ author: HAK
 time  : 11:00 PM, 09/11/2017
 '''
 
-import os
 import configparser
 import sys
 from shutil import copy
@@ -31,7 +30,7 @@ if not os.path.isdir(directory_path):
 #--------------------------------------------------------------------------------------------
 config = configparser.ConfigParser()
 config.sections()
-config.read('./fileDistribution.ini')
+config.read('./Config/fileDistribution.ini')
 paths_list = [x[1] for x in config.items('hak.paths')]
 #--------------------------------------------------------------------------------------------
 
@@ -39,7 +38,7 @@ paths_list = [x[1] for x in config.items('hak.paths')]
 #Csvs paths to put files
 #--------------------------------------------------------------------------------------------
 csv_list = [x[1] for x in config.items('hak.csv')]
-print(csv_list)
+#print(csv_list)
 #--------------------------------------------------------------------------------------------
 
 
@@ -96,11 +95,13 @@ for file in os.listdir(directory_path):
     elif ntpath.basename(newname).startswith('METER'):
         countFiles[4] += 1
         copy(newname, paths_list[4])
+        commandExe = 'start python ' + 'metercsvProcessing.py' + ' ' + '\"' + paths_list[4] + '/' + ntpath.basename(newname) + '\"'
+        os.system(commandExe)
         update_csv(csv_list[4], filectime, paths_list[4]+'/'+ntpath.basename(newname))
     elif ntpath.basename(newname).startswith('INVERTER'):
         countFiles[3] += 1
         copy(newname, paths_list[1])
-        commandExe = 'start python '+'jsontocsvProcessing.py'+' '+'\"'+paths_list[1]+'/'+ntpath.basename(newname)+'\"'
+        commandExe = 'start python '+'invertercsvProcessing.py'+' '+'\"'+paths_list[1]+'/'+ntpath.basename(newname)+'\"'
         os.system(commandExe)
         update_csv(csv_list[1], filectime, paths_list[1]+'/'+ntpath.basename(newname))
     os.remove(newname)
