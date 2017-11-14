@@ -12,7 +12,6 @@ import datetime
 import ntpath
 headers = ['File Name', 'Timestamp']
 
-
 #Get process id (Get the path for file check if its doe copying or downloading)
 #--------------------------------------------------------------------------------------------
 print('Process id is',str(os.getpid()))
@@ -41,14 +40,15 @@ csv_list = [x[1] for x in config.items('hak.csv')]
 #--------------------------------------------------------------------------------------------
 for paths in paths_list:
     if not os.path.isdir(paths):
-        print('Provided directory for some variable not exist')
-        sys.exit(1)
+        print('Provided directory for some variable not exist '+paths)
+        sys.exit(0)
 #--------------------------------------------------------------------------------------------
 
 
 #Update csv for files added
 #--------------------------------------------------------------------------------------------
 def update_csv(path, timeoffile, pathName):
+    csvfile = None
     while True:
         try:
             csvfile = open(path, 'a')
@@ -62,6 +62,7 @@ def update_csv(path, timeoffile, pathName):
             print('csv locked')
         finally:
             if csvfile:
+                print('CSV file written and closed.')
                 csvfile.close()
                 break
         time.sleep(3)
@@ -112,6 +113,7 @@ while True:
         time.sleep(3)
     else:
         print('file path not exist')
+        break
         sys.exit(0)
-sys.exit(0)
+sys.exit(1)
 #----------------------------------------------------------------------------------------------

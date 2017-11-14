@@ -15,16 +15,19 @@ PATH_OF_JSON_FILE = sys.argv[1]
 #print(PATH_TO_CSV_INVERTER_AGGREGATED)
 #print(PATH_OF_JSON_FILE)
 
+
 if PATH_OF_JSON_FILE == '':
     print('PATHS NOT DEFINED')
     sys.exit(1)
+
 
 with open(PATH_OF_JSON_FILE) as data_file:
     data = json.load(data_file)
 
 DATA_DICT = {'1': [], '2': [], '3': []}
-
 keys = ['DAY_ENERGY', 'PAC', 'TOTAL_ENERGY', 'YEAR_ENERGY']
+
+
 for items in keys:
     json_data = (data['Body'][items]['Values'])
     for dict_key in ['1','2','3']:
@@ -33,12 +36,16 @@ for items in keys:
         else:
             DATA_DICT[dict_key].append(np.nan)
 
+
 for keys in DATA_DICT:
     DATA_DICT[keys].append(data['Head']['Timestamp'])
+
 
 df = pd.DataFrame(DATA_DICT)
 df = df.transpose()
 
+
+fileObj = None
 while True:
     if os.path.exists(PATH_TO_CSV_INVERTER_AGGREGATED):
         try:
@@ -54,3 +61,4 @@ while True:
                 fileObj.close()
                 break
     time.sleep(3)
+sys.exit(1)

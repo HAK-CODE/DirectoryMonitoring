@@ -14,16 +14,19 @@ PATH_OF_JSON_FILE = sys.argv[1]
 #print(PATH_TO_CSV_METER_AGGREGATED)
 #print(PATH_OF_JSON_FILE)
 
+
 if PATH_OF_JSON_FILE == '':
     print('PATHS NOT DEFINED')
     sys.exit(1)
 
+
 with open(PATH_OF_JSON_FILE) as data_file:
     data = json.load(data_file)
 
-DATA_DICT = {'Code': "", 'Reason': "", 'UserMessage': "", 'Timestamp': ""}
 
+DATA_DICT = {'Code': "", 'Reason': "", 'UserMessage': "", 'Timestamp': ""}
 json_data = (data['Head']['Status'])
+
 
 for dict_key in ['Code', 'Reason', 'UserMessage']:
     if dict_key in json_data:
@@ -31,10 +34,13 @@ for dict_key in ['Code', 'Reason', 'UserMessage']:
     else:
         DATA_DICT[dict_key] = ""
 
+
 DATA_DICT['Timestamp'] = data['Head']['Timestamp']
 df = pd.DataFrame.from_records([DATA_DICT], index='Code')
 df = df[['Reason', 'UserMessage', 'Timestamp']]
 
+
+fileObj = None
 while True:
     if os.path.exists(PATH_TO_CSV_METER_AGGREGATED):
         try:
@@ -50,3 +56,4 @@ while True:
                 fileObj.close()
                 break
     time.sleep(3)
+sys.exit(1)
