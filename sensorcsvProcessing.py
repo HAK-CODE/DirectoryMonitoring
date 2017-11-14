@@ -24,14 +24,18 @@ with open(PATH_OF_JSON_FILE) as data_file:
 
 DATA_DICT = {'10': 0, '11': 0, '12': 0, '14': 0, '20': 0, '30': 0}
 parser_tag = ['1', '2', '3']
+
 for items in parser_tag:
     json_data = data['Body'][items]
-    for key, value in json_data.items():
-        dict_key = items + key
-        if json_data[key]['Value'] != None or json_data[key]['Value'] != '':
-            DATA_DICT[dict_key] = json_data[key]['Value']
-        else:
-            DATA_DICT[dict_key] = np.nan
+    if json_data != None:
+        for key, value in json_data.items():
+            dict_key = items + key
+            if json_data[key]['Value'] != None:
+                DATA_DICT[dict_key] = json_data[key]['Value']
+            else:
+                DATA_DICT[dict_key] = np.nan
+    else:
+        DATA_DICT[dict_key] = np.nan
 
 DATA_DICT['Timestamp'] = data['Head']['Timestamp']
 df = pd.DataFrame.from_records([DATA_DICT], index='10')
