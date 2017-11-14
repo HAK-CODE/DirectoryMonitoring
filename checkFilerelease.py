@@ -89,6 +89,8 @@ while True:
                 if 'SENSOR' in newname:
                     copy(newname, paths_list[3])
                     update_csv(csv_list[3], filectime, paths_list[3] + '/' + ntpath.basename(newname))
+                    commandExe = 'start python ' + 'sensorcsvProcessing.py' + ' ' + '\"' + paths_list[3] + '/' + ntpath.basename(newname) + '\"'
+                    os.system(commandExe)
                 elif 'LOG' in newname:
                     copy(newname, paths_list[2])
                     update_csv(csv_list[2], filectime, paths_list[2] + '/' + ntpath.basename(newname))

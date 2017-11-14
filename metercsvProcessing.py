@@ -9,9 +9,9 @@ import os
 2 argument is for JSON FILE
 '''
 
-PATH_TO_CSV_INVERTER_AGGREGATED = 'C:\\Users\\Hammad Ali Khan\\Desktop\\DC DATA\\METER\\METER_AGGREGATE.csv'
+PATH_TO_CSV_METER_AGGREGATED = 'C:/Users/hammad.ali/Desktop/DC DATA/METER/METER_AGGREGATE.csv'
 PATH_OF_JSON_FILE = sys.argv[1]
-#print(PATH_TO_CSV_INVERTER_AGGREGATED)
+#print(PATH_TO_CSV_METER_AGGREGATED)
 #print(PATH_OF_JSON_FILE)
 
 if PATH_OF_JSON_FILE == '':
@@ -36,15 +36,15 @@ df = pd.DataFrame.from_records([DATA_DICT], index='Code')
 df = df[['Reason', 'UserMessage', 'Timestamp']]
 
 while True:
-    if os.path.exists(PATH_TO_CSV_INVERTER_AGGREGATED):
+    if os.path.exists(PATH_TO_CSV_METER_AGGREGATED):
         try:
-            fileObj = open(PATH_TO_CSV_INVERTER_AGGREGATED, 'a')
-            print('trying to open file ',PATH_TO_CSV_INVERTER_AGGREGATED)
+            fileObj = open(PATH_TO_CSV_METER_AGGREGATED, 'a')
+            print('trying to open file ', PATH_TO_CSV_METER_AGGREGATED)
             if fileObj:
-                print('file not locked',PATH_TO_CSV_INVERTER_AGGREGATED)
-                df.to_csv(PATH_TO_CSV_INVERTER_AGGREGATED, mode='a', header=False)
+                print('file not locked', PATH_TO_CSV_METER_AGGREGATED)
+                df.to_csv(PATH_TO_CSV_METER_AGGREGATED, mode='a', header=False)
         except OSError:
-            print('file is locked',PATH_TO_CSV_INVERTER_AGGREGATED)
+            print('file is locked', PATH_TO_CSV_METER_AGGREGATED)
         finally:
             if fileObj:
                 fileObj.close()

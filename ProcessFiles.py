@@ -15,7 +15,7 @@ headers = ['File Name', 'Timestamp']
 
 #Directory path to get files
 #--------------------------------------------------------------------------------------------
-directory_path = 'C:/Users/Hammad Ali Khan/Desktop/DC'
+directory_path = 'C:/Users/hammad.ali/Desktop/DC'
 #--------------------------------------------------------------------------------------------
 
 
@@ -84,6 +84,8 @@ for file in os.listdir(directory_path):
         countFiles[0] += 1
         copy(newname, paths_list[3])
         update_csv(csv_list[3], filectime, paths_list[3]+'/'+ntpath.basename(newname))
+        commandExe = 'start python ' + 'sensorcsvProcessing.py' + ' ' + '\"' + paths_list[3] + '/' + ntpath.basename(newname) + '\"'
+        os.system(commandExe)
     elif 'LOG' in newname:
         countFiles[1] += 1
         copy(newname, paths_list[2])
@@ -95,7 +97,7 @@ for file in os.listdir(directory_path):
     elif ntpath.basename(newname).startswith('METER'):
         countFiles[4] += 1
         copy(newname, paths_list[4])
-        commandExe = 'start python ' + 'metercsvProcessing.py' + ' ' + '\"' + paths_list[4] + '/' + ntpath.basename(newname) + '\"'
+        commandExe = 'start python '+'metercsvProcessing.py' + ' ' + '\"' + paths_list[4] + '/' + ntpath.basename(newname) + '\"'
         os.system(commandExe)
         update_csv(csv_list[4], filectime, paths_list[4]+'/'+ntpath.basename(newname))
     elif ntpath.basename(newname).startswith('INVERTER'):
