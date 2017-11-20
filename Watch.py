@@ -70,9 +70,6 @@ class Handler(FileSystemEventHandler):
                 print('---------------------------------------------------------------------------------')
             else:
                 FILE = FILE_INFO(event.src_path)
-                CHG_PATH = '\"'+event.src_path+'\"' if ' ' in event.src_path else event.src_path
-                commandExe = 'start python '+'checkFilerelease.py'+' '+CHG_PATH
-                os.system(commandExe)
                 if self.server != None:
                     self.send_info(FILE.FILEBASIC(), False)
                 print('-------------------------------- NEW FILE CREATED -------------------------------')
@@ -82,6 +79,9 @@ class Handler(FileSystemEventHandler):
                 print("CTIME : ", FILE.FILEBASIC()[3])
                 print("SIZE  : ", FILE.FILEBASIC()[4], "BYTES")
                 print('---------------------------------------------------------------------------------')
+                CHG_PATH = '\"' + event.src_path + '\"' if ' ' in event.src_path else event.src_path
+                commandExe = 'start python '+'checkFilerelease.py'+' '+CHG_PATH
+                os.system(commandExe)
 
     def send_info(self, data, DIR=False):
         if DIR == True:
