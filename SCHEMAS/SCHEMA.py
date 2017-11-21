@@ -1,5 +1,23 @@
 from jsonschema import validate
 
+'''
+--------------------------------------------------------------------------------------------
+'''
+SENSOR_JSON_META = dict({
+    "SiteID" : None,
+    "SiteName" : None,
+    "Timestamp" : None,
+    "siteSensors" : {
+        "solarPotential" : None,
+        "for wind" : None,
+        "ambientTemperature" : None
+    },
+    "inverterSensors": {
+        "ID": None,
+        "internalTemperature": None
+    }
+})
+
 SCHEMA_SENSOR = {
     "type" : "object",
     "properties" : {
@@ -23,6 +41,27 @@ SCHEMA_SENSOR = {
         }
     },
 }
+'''
+--------------------------------------------------------------------------------------------
+'''
+
+
+'''
+--------------------------------------------------------------------------------------------
+'''
+
+INVERTER_JSON_META = dict({
+    "SiteID": None,
+    "SiteName": None,
+    "Timestamp": None,
+    "inverter": {
+        "ID": None,
+        "DAY_ENERGY": None,
+        "PAC": None,
+        "TOTAL_ENERGY": None,
+        "YEAR_ENERGY": None
+    }
+})
 
 SCHEMA_INVERTER = {
     "type" : "object",
@@ -42,3 +81,7 @@ SCHEMA_INVERTER = {
         }
     }
 }
+
+'''
+--------------------------------------------------------------------------------------------
+'''
