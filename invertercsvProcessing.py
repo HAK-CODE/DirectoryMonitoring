@@ -59,6 +59,8 @@ df_3 = pd.DataFrame(rows[2]).transpose()
 
 JOB_SCHEDULE = [[PATH_TO_CSV_INVERTER_1, df_1], [PATH_TO_CSV_INVERTER_2, df_2], [PATH_TO_CSV_INVERTER_3, df_3]]
 
+print(df_1)
+
 fileObj = None
 count = 0
 while True:
@@ -79,7 +81,7 @@ while True:
                     df.to_csv(PATH_TO_CSV_INVERTER_AGGREGATED, mode='a', header=False)
                 else:
                     print('file not locked', JOB_SCHEDULE[count - 1][0])
-                    JOB_SCHEDULE[count - 1][1].to_csv(JOB_SCHEDULE[count - 1][0], mode='a', header=False)
+                    JOB_SCHEDULE[count - 1][1].to_csv(JOB_SCHEDULE[count - 1][0], mode='a', header=False, index=False)
         except OSError:
             if count == 0:
                 print('file is locked',PATH_TO_CSV_INVERTER_AGGREGATED)
