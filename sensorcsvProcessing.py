@@ -4,6 +4,11 @@ import pandas as pd
 import sys
 import time
 import os
+from UploadData import saif_validate,saif_create
+
+
+
+
 
 '''
 1 argument is for CSV FILE DEFINED in FILE
@@ -93,8 +98,13 @@ df_s1 = pd.DataFrame.from_records([SENSOR_INDIVIDUAL_1], index='10')
 df_s2 = pd.DataFrame.from_records([SENSOR_INDIVIDUAL_2], index='20')
 df_s3 = pd.DataFrame.from_records([SENSOR_INDIVIDUAL_3], index='30')
 df_list = [df_s1, df_s2, df_s3]
-commadexe = 'python '+'UploadData.py '+str('SENSOR')
-os.system(commadexe)
+
+
+# print(df_list)
+print(saif_create(df_s1.to_dict(),df_s2.to_dict(),df_s3.to_dict()))
+#saif_validate()
+# commadexe = 'python '+'UploadData.py '+str('SENSOR')
+# os.system(commadexe)
 
 
 JOB_SCHEDULE = [[PATH_TO_CSV_SENSOR_INVERTER_1, df_s1], [PATH_TO_CSV_SENSOR_INVERTER_2, df_s2], [PATH_TO_CSV_SENSOR_INVERTER_3, df_s3]]

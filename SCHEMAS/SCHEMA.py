@@ -25,17 +25,7 @@ SENSOR_JSON_META = dict({
         }
     }
 })
-SENSOR_JSON_META["SiteID"] = 12
-SENSOR_JSON_META["SiteName"] = "Dawood"
-SENSOR_JSON_META["Timestamp"] = "10:10:10"
-SENSOR_JSON_META["siteSensors"]["solarPotential"] = 560
-SENSOR_JSON_META["siteSensors"]["wind"] = 23
-SENSOR_JSON_META["siteSensors"]["ambientTemperature"] = 123
-SENSOR_JSON_META["inverterSensors"]["InverterSensor_1"]["internalTemperature"] = 1234
-SENSOR_JSON_META["inverterSensors"]["InverterSensor_2"]["internalTemperature"] = 11232
-SENSOR_JSON_META["inverterSensors"]["InverterSensor_3"]["internalTemperature"] = 12312312
 
-print(SENSOR_JSON_META)
 SCHEMA_SENSOR = {
     "type": "object",
     "properties": {
@@ -76,7 +66,6 @@ SCHEMA_SENSOR = {
     }
 }
 
-print(validate(SENSOR_JSON_META,SCHEMA_SENSOR))
 '''
 --------------------------------------------------------------------------------------------
 '''
