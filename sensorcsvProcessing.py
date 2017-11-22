@@ -19,6 +19,13 @@ PATH_TO_CSV_SENSOR_INVERTER_1 = 'C:/Users/hammad.ali/Desktop/DC DATA/SENSOR/SENS
 PATH_TO_CSV_SENSOR_INVERTER_2 = 'C:/Users/hammad.ali/Desktop/DC DATA/SENSOR/SENSOR_INVERTER_2.csv'
 PATH_TO_CSV_SENSOR_INVERTER_3 = 'C:/Users/hammad.ali/Desktop/DC DATA/SENSOR/SENSOR_INVERTER_3.csv'
 PATH_OF_JSON_FILE = sys.argv[1]
+
+
+
+
+
+
+
 print(PATH_TO_CSV_SENSOR_AGGREGATED)
 print(PATH_OF_JSON_FILE)
 
@@ -85,6 +92,10 @@ df = pd.DataFrame.from_records([DATA_DICT], index='10')
 df_s1 = pd.DataFrame.from_records([SENSOR_INDIVIDUAL_1], index='10')
 df_s2 = pd.DataFrame.from_records([SENSOR_INDIVIDUAL_2], index='20')
 df_s3 = pd.DataFrame.from_records([SENSOR_INDIVIDUAL_3], index='30')
+df_list = [df_s1, df_s2, df_s3]
+commadexe = 'python '+'UploadData.py '+str('SENSOR')
+os.system(commadexe)
+
 
 JOB_SCHEDULE = [[PATH_TO_CSV_SENSOR_INVERTER_1, df_s1], [PATH_TO_CSV_SENSOR_INVERTER_2, df_s2], [PATH_TO_CSV_SENSOR_INVERTER_3, df_s3]]
 fileObj = None
