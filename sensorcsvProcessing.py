@@ -106,7 +106,7 @@ print(saif_create(df_s1.to_dict(),df_s2.to_dict(),df_s3.to_dict()))
 # commadexe = 'python '+'UploadData.py '+str('SENSOR')
 # os.system(commadexe)
 
-
+input()
 JOB_SCHEDULE = [[PATH_TO_CSV_SENSOR_INVERTER_1, df_s1], [PATH_TO_CSV_SENSOR_INVERTER_2, df_s2], [PATH_TO_CSV_SENSOR_INVERTER_3, df_s3]]
 fileObj = None
 count = 0
