@@ -4,11 +4,25 @@ import pandas as pd
 import sys
 import time
 import os
-from UploadData import saif_validate,saif_create
+import datetime
+import predix
 
+app = predix.app.Manifest('Config/manifest.yml')
+ts = predix.data.timeseries.TimeSeries()
 
-
-
+def CheckOldData():
+    try:
+        with open("DefaultDataStore/Default_Store.csv" , "r") as file:
+                lines = file.readlines()
+        for i in lines:
+            data=i.split(";")
+            ts.queue(data[0],value=data[1],timestamp=data[2])
+            ts.send()
+            print (data)
+        os.remove("DefaultDataStore/Default_Store.csv")
+    except Exception:
+        print ("Or NO Internet :(")
+        print ("Old Data Not Found! :)")
 
 '''
 1 argument is for CSV FILE DEFINED in FILE
@@ -100,13 +114,47 @@ df_s3 = pd.DataFrame.from_records([SENSOR_INDIVIDUAL_3], index='30')
 df_list = [df_s1, df_s2, df_s3]
 
 
+
+CheckOldData()
+
+
+df_s1_p = pd.DataFrame.from_records([SENSOR_INDIVIDUAL_1], index='Timestamp')
+df_s2_p = pd.DataFrame.from_records([SENSOR_INDIVIDUAL_2], index='Timestamp')
+df_s3_p = pd.DataFrame.from_records([SENSOR_INDIVIDUAL_3], index='Timestamp')
+
+df_for_predix = [df_s1_p, df_s2_p, df_s3_p]
+with open("Config/Tags.csv", "r") as file:
+    tag = file.readlines()
+
+k=0
+for i in df_for_predix:
+    time_stamp= str(i.index[0]).replace('T',' ')
+    time_stamp = time_stamp.replace('+05:00', '')
+    unix_timestamp = int(time.mktime(datetime.datetime.strptime(time_stamp, "%Y-%m-%d %H:%M:%S").timetuple()))
+
+
+    for j in range(len(list(i))):
+
+        tag[k] = tag[k].replace("\n","")
+
+        try:
+            ts.queue(tag[k], value=str(i.iloc[0,j]), timestamp=unix_timestamp * 1000)
+            ts.send()
+        except Exception:
+            print("No internet")
+            with open("DefaultDataStore/Default_Store.csv", "a") as file:
+                file.write(tag[k] + ";" + str(i.iloc[0,j]) + ";" + str(unix_timestamp * 1000) + "\n")
+
+        print(i.iloc[0, j], tag[k])
+        k=k+1
+
+
 # print(df_list)
-print(saif_create(df_s1.to_dict(),df_s2.to_dict(),df_s3.to_dict()))
+#print(saif_create(df_s1.to_dict(),df_s2.to_dict(),df_s3.to_dict()))
 #saif_validate()
 # commadexe = 'python '+'UploadData.py '+str('SENSOR')
 # os.system(commadexe)
 
-input()
 JOB_SCHEDULE = [[PATH_TO_CSV_SENSOR_INVERTER_1, df_s1], [PATH_TO_CSV_SENSOR_INVERTER_2, df_s2], [PATH_TO_CSV_SENSOR_INVERTER_3, df_s3]]
 fileObj = None
 count = 0

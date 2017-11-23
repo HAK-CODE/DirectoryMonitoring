@@ -1,0 +1,14 @@
+---
+applications:
+- name: my-predix-app
+env:
+  PREDIX_APP_CLIENT_ID: Reon
+  PREDIX_APP_CLIENT_SECRET: Reon_DIH
+  PREDIX_DATA_TIMESERIES_INGEST_URI: wss://gateway-predix-data-services.run.aws-usw02-pr.ice.predix.io/v1/stream/messages
+  PREDIX_DATA_TIMESERIES_INGEST_ZONE_ID: 41a89164-d768-4926-b16e-381d7de0b287
+  PREDIX_DATA_TIMESERIES_QUERY_URI: https://time-series-store-predix.run.aws-usw02-pr.ice.predix.io
+  PREDIX_DATA_TIMESERIES_QUERY_ZONE_ID: 41a89164-d768-4926-b16e-381d7de0b287
+  PREDIX_SECURITY_UAA_URI: https://a4cbc961-064a-48a6-a838-f7badceedfc0.predix-uaa.run.aws-usw02-pr.ice.predix.io
+services:
+- hakdev-predix-uaa-free
+- hakdev-predix-timeseries-free
