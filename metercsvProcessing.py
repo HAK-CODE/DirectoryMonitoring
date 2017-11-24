@@ -3,13 +3,16 @@ import pandas as pd
 import sys
 import time
 import os
+import configparser
 
 '''
 1 argument is for CSV FILE DEFINED in FILE
 2 argument is for JSON FILE
 '''
-
-PATH_TO_CSV_METER_AGGREGATED = 'C:/Users/hammad.ali/Desktop/DC DATA/METER/METER_AGGREGATE.csv'
+config = configparser.ConfigParser()
+config.sections()
+config.read('./Config/fileDistribution.ini')
+PATH_TO_CSV_METER_AGGREGATED = config['hak.aggregated.csv']['METER_AGGREGATED_CSV']
 PATH_OF_JSON_FILE = sys.argv[1]
 #print(PATH_TO_CSV_METER_AGGREGATED)
 #print(PATH_OF_JSON_FILE)
@@ -19,14 +22,11 @@ if PATH_OF_JSON_FILE == '':
     print('PATHS NOT DEFINED')
     sys.exit(1)
 
-
 with open(PATH_OF_JSON_FILE) as data_file:
     data = json.load(data_file)
 
-
 DATA_DICT = {'Code': "", 'Reason': "", 'UserMessage': "", 'Timestamp': ""}
 json_data = (data['Head']['Status'])
-
 
 for dict_key in ['Code', 'Reason', 'UserMessage']:
     if dict_key in json_data:
@@ -34,11 +34,9 @@ for dict_key in ['Code', 'Reason', 'UserMessage']:
     else:
         DATA_DICT[dict_key] = ""
 
-
 DATA_DICT['Timestamp'] = data['Head']['Timestamp']
 df = pd.DataFrame.from_records([DATA_DICT], index='Code')
 df = df[['Reason', 'UserMessage', 'Timestamp']]
-
 
 fileObj = None
 while True:

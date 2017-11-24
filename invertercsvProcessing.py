@@ -93,6 +93,7 @@ while True:
                 print('file is locked',JOB_SCHEDULE[count - 1][0])
         finally:
             if fileObj:
+                print('written and closed ', fileObj.name)
                 fileObj.close()
                 count += 1
                 if count > 3:

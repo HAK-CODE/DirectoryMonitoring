@@ -4,11 +4,11 @@ import pandas as pd
 import sys
 import time
 import os
+import predix
 import datetime
-import predix.app
-#import predix.data.timeseries
+import predix.data.timeseries
 import configparser
-'''
+
 app = predix.app.Manifest('./Config/manifest.yml')
 ts =app.get_timeseries()
 
@@ -25,7 +25,7 @@ def CheckOldData():
     except Exception:
         print ("Or NO Internet :(")
         print ("Old Data Not Found! :)")
-'''
+
 '''
 1 argument is for CSV FILE DEFINED in FILE
 2 argument is for JSON FILE
@@ -43,10 +43,10 @@ PATH_TO_CSV_SENSOR_INVERTER_1 = config['hak.sensors']['SENSOR_INVERTER_1']
 PATH_TO_CSV_SENSOR_INVERTER_2 = config['hak.sensors']['SENSOR_INVERTER_2']
 PATH_TO_CSV_SENSOR_INVERTER_3 = config['hak.sensors']['SENSOR_INVERTER_3']
 PATH_OF_JSON_FILE = sys.argv[1]
-print(PATH_TO_CSV_SENSOR_AGGREGATED)
-print(PATH_TO_CSV_SENSOR_INVERTER_1)
-print(PATH_TO_CSV_SENSOR_INVERTER_2)
-print(PATH_TO_CSV_SENSOR_INVERTER_3)
+#print(PATH_TO_CSV_SENSOR_AGGREGATED)
+#print(PATH_TO_CSV_SENSOR_INVERTER_1)
+#print(PATH_TO_CSV_SENSOR_INVERTER_2)
+#print(PATH_TO_CSV_SENSOR_INVERTER_3)
 '''
 -------------------------------------------------------------------------------------------------
 '''
@@ -115,7 +115,7 @@ df_s3 = pd.DataFrame.from_records([SENSOR_INDIVIDUAL_3], index='30')
 df_list = [df_s1, df_s2, df_s3]
 
 
-'''
+
 CheckOldData()
 df_s1_p = pd.DataFrame.from_records([SENSOR_INDIVIDUAL_1], index='Timestamp')
 df_s2_p = pd.DataFrame.from_records([SENSOR_INDIVIDUAL_2], index='Timestamp')
@@ -137,7 +137,7 @@ for i in df_for_predix:
         tag[k] = tag[k].replace("\n","")
 
         try:
-            ts.queue(tag[k], value=str(i.iloc[0,j]), timestamp=unix_timestamp * 1000)
+            ts.queue(tag[k], value=str(i.iloc[0,j]), timestamp=unix_timestamp * 1000, quality=3)
             ts.send()
         except Exception:
             print("No internet")
@@ -146,7 +146,7 @@ for i in df_for_predix:
 
         print(i.iloc[0, j], tag[k])
         k=k+1
-'''
+
 
 JOB_SCHEDULE = [[PATH_TO_CSV_SENSOR_INVERTER_1, df_s1], [PATH_TO_CSV_SENSOR_INVERTER_2, df_s2], [PATH_TO_CSV_SENSOR_INVERTER_3, df_s3]]
 fileObj = None
