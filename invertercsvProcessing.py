@@ -4,25 +4,32 @@ import pandas as pd
 import sys
 import time
 import os
+import configparser
 
 '''
 1 argument is for CSV FILE DEFINED in FILE
 2 argument is for JSON FILE
 '''
-
-PATH_TO_CSV_INVERTER_AGGREGATED = 'C:/Users/hammad.ali/Desktop/DC DATA/INVERTER/INVERTER_AGGREGATE.csv'
-PATH_TO_CSV_INVERTER_1 = 'C:/Users/hammad.ali/Desktop/DC DATA/INVERTER/INVERTER_1.csv'
-PATH_TO_CSV_INVERTER_2 = 'C:/Users/hammad.ali/Desktop/DC DATA/INVERTER/INVERTER_2.csv'
-PATH_TO_CSV_INVERTER_3 = 'C:/Users/hammad.ali/Desktop/DC DATA/INVERTER/INVERTER_3.csv'
+'''
+-------------------------------------------------------------------------------------------------
+PATHS FOR CSV's
+-------------------------------------------------------------------------------------------------
+'''
+config = configparser.ConfigParser()
+config.sections()
+config.read('./Config/fileDistribution.ini')
+PATH_TO_CSV_INVERTER_AGGREGATED = config['hak.aggregated.csv']['INVERTER_AGGREGATED_CSV']
+PATH_TO_CSV_INVERTER_1 = config['hak.inverters']['INVERTER_1']
+PATH_TO_CSV_INVERTER_2 = config['hak.inverters']['INVERTER_2']
+PATH_TO_CSV_INVERTER_3 = config['hak.inverters']['INVERTER_3']
 PATH_OF_JSON_FILE = sys.argv[1]
-#print(PATH_TO_CSV_INVERTER_AGGREGATED)
-#print(PATH_OF_JSON_FILE)
-
+'''
+-------------------------------------------------------------------------------------------------
+'''
 
 if PATH_OF_JSON_FILE == '':
     print('PATHS NOT DEFINED')
     sys.exit(1)
-
 
 with open(PATH_OF_JSON_FILE) as data_file:
     data = json.load(data_file)
@@ -58,9 +65,6 @@ df_2 = pd.DataFrame(rows[1]).transpose()
 df_3 = pd.DataFrame(rows[2]).transpose()
 
 JOB_SCHEDULE = [[PATH_TO_CSV_INVERTER_1, df_1], [PATH_TO_CSV_INVERTER_2, df_2], [PATH_TO_CSV_INVERTER_3, df_3]]
-
-print(df_1)
-
 fileObj = None
 count = 0
 while True:
@@ -73,7 +77,7 @@ while True:
                 fileObj = open(PATH_TO_CSV_INVERTER_AGGREGATED, 'a')
                 print('trying to open file ',PATH_TO_CSV_INVERTER_AGGREGATED)
             else:
-                fileObj = open(JOB_SCHEDULE[count - 1][0],'a')
+                fileObj = open(JOB_SCHEDULE[count - 1][0], 'a')
                 print('trying to open file ', JOB_SCHEDULE[count - 1][0])
             if fileObj:
                 if count == 0:

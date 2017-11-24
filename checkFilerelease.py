@@ -8,7 +8,6 @@ import sys
 import configparser
 from shutil import copy
 import csv
-import datetime
 import ntpath
 headers = ['File Name', 'Timestamp']
 

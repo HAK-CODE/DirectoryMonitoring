@@ -5,10 +5,12 @@ import sys
 import time
 import os
 import datetime
-import predix
-
-app = predix.app.Manifest('Config/manifest.yml')
-ts = predix.data.timeseries.TimeSeries()
+import predix.app
+#import predix.data.timeseries
+import configparser
+'''
+app = predix.app.Manifest('./Config/manifest.yml')
+ts =app.get_timeseries()
 
 def CheckOldData():
     try:
@@ -23,7 +25,7 @@ def CheckOldData():
     except Exception:
         print ("Or NO Internet :(")
         print ("Old Data Not Found! :)")
-
+'''
 '''
 1 argument is for CSV FILE DEFINED in FILE
 2 argument is for JSON FILE
@@ -33,20 +35,21 @@ def CheckOldData():
 PATHS FOR CSV's
 -------------------------------------------------------------------------------------------------
 '''
-PATH_TO_CSV_SENSOR_AGGREGATED = 'C:/Users/hammad.ali/Desktop/DC DATA/SENSOR/SENSOR_AGGREGATE.csv'
-PATH_TO_CSV_SENSOR_INVERTER_1 = 'C:/Users/hammad.ali/Desktop/DC DATA/SENSOR/SENSOR_INVERTER_1.csv'
-PATH_TO_CSV_SENSOR_INVERTER_2 = 'C:/Users/hammad.ali/Desktop/DC DATA/SENSOR/SENSOR_INVERTER_2.csv'
-PATH_TO_CSV_SENSOR_INVERTER_3 = 'C:/Users/hammad.ali/Desktop/DC DATA/SENSOR/SENSOR_INVERTER_3.csv'
+config = configparser.ConfigParser()
+config.sections()
+config.read('./Config/fileDistribution.ini')
+PATH_TO_CSV_SENSOR_AGGREGATED = config['hak.aggregated.csv']['SENSORS_AGGREGATED_CSV']
+PATH_TO_CSV_SENSOR_INVERTER_1 = config['hak.sensors']['SENSOR_INVERTER_1']
+PATH_TO_CSV_SENSOR_INVERTER_2 = config['hak.sensors']['SENSOR_INVERTER_2']
+PATH_TO_CSV_SENSOR_INVERTER_3 = config['hak.sensors']['SENSOR_INVERTER_3']
 PATH_OF_JSON_FILE = sys.argv[1]
-
-
-
-
-
-
-
 print(PATH_TO_CSV_SENSOR_AGGREGATED)
-print(PATH_OF_JSON_FILE)
+print(PATH_TO_CSV_SENSOR_INVERTER_1)
+print(PATH_TO_CSV_SENSOR_INVERTER_2)
+print(PATH_TO_CSV_SENSOR_INVERTER_3)
+'''
+-------------------------------------------------------------------------------------------------
+'''
 
 if PATH_OF_JSON_FILE == '':
     print('PATHS NOT DEFINED')
@@ -57,7 +60,6 @@ if PATH_OF_JSON_FILE == '':
 JSON file for parsing data
 -------------------------------------------------------------------------------------------------
 '''
-
 with open(PATH_OF_JSON_FILE) as data_file:
     data = json.load(data_file)
 
@@ -67,7 +69,6 @@ SENSOR_INDIVIDUAL_1 = {'10': 0, '11': 0, '12': 0, '14': 0}
 SENSOR_INDIVIDUAL_2 = {'20': 0, '21': 0, '22': 0, '24': 0}
 SENSOR_INDIVIDUAL_3 = {'30': 0, '31': 0, '32': 0, '34': 0}
 parser_tag = ['1', '2', '3']
-
 SENSOR_11 = None
 SENSOR_12 = None
 SENSOR_14 = None
@@ -114,10 +115,8 @@ df_s3 = pd.DataFrame.from_records([SENSOR_INDIVIDUAL_3], index='30')
 df_list = [df_s1, df_s2, df_s3]
 
 
-
+'''
 CheckOldData()
-
-
 df_s1_p = pd.DataFrame.from_records([SENSOR_INDIVIDUAL_1], index='Timestamp')
 df_s2_p = pd.DataFrame.from_records([SENSOR_INDIVIDUAL_2], index='Timestamp')
 df_s3_p = pd.DataFrame.from_records([SENSOR_INDIVIDUAL_3], index='Timestamp')
@@ -147,13 +146,7 @@ for i in df_for_predix:
 
         print(i.iloc[0, j], tag[k])
         k=k+1
-
-
-# print(df_list)
-#print(saif_create(df_s1.to_dict(),df_s2.to_dict(),df_s3.to_dict()))
-#saif_validate()
-# commadexe = 'python '+'UploadData.py '+str('SENSOR')
-# os.system(commadexe)
+'''
 
 JOB_SCHEDULE = [[PATH_TO_CSV_SENSOR_INVERTER_1, df_s1], [PATH_TO_CSV_SENSOR_INVERTER_2, df_s2], [PATH_TO_CSV_SENSOR_INVERTER_3, df_s3]]
 fileObj = None
