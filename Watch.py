@@ -11,6 +11,8 @@ from     directoryInfo      import PATH_INFO_PROVIDER
 from     server             import TCPSERVER
 import   configparser
 import   os
+import   subprocess
+from subprocess import DEVNULL
 
 '''
 An event handler that use to listen triggered events from FileSystemEvent
@@ -39,8 +41,11 @@ class Handler(FileSystemEventHandler):
     content = []
     server = None
     serverConfig = {}
+
+
     with open('ignore.txt') as f:
         content = f.read().splitlines()
+
 
     def attachServer(self, server_status):
         if(server_status == True):
@@ -51,8 +56,10 @@ class Handler(FileSystemEventHandler):
             self.server = TCPSERVER(topSecret['IP'], int(topSecret['Port']), int(topSecret['Buffer']))
             self.server.sendData('Connect to server on port '+str(self.server.TCP_PORT))
 
+
     def on_modified(self, event):
         print("Modified "+event.src_path)
+
 
     def on_created(self, event):
         PATH = event.src_path
@@ -80,8 +87,8 @@ class Handler(FileSystemEventHandler):
                 print("SIZE  : ", FILE.FILEBASIC()[4], "BYTES")
                 print('---------------------------------------------------------------------------------')
                 CHG_PATH = '\"' + event.src_path + '\"' if ' ' in event.src_path else event.src_path
-                commandExe = 'start python '+'checkFilerelease.py'+' '+CHG_PATH
-                os.system(commandExe)
+                subprocess.Popen(['python3','checkFilerelease.py',CHG_PATH])
+
 
     def send_info(self, data, DIR=False):
         if DIR == True:
@@ -102,9 +109,14 @@ class Handler(FileSystemEventHandler):
                         "---------------------------------------------------------------------------------")
             self.server.sendData(dataGram)
 
+'''
+class: watcher
+used to watch for events create and modified
+'''
 class Watcher:
     DIRECTORY = ""
     SERVER = False
+
 
     def __init__(self, DIRECTORY, SERVER = False):
         self.DIRECTORY = DIRECTORY

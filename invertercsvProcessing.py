@@ -7,14 +7,15 @@ import os
 import configparser
 
 '''
+This file is used to process inverter file and distribute data to particular
+inverter csv. It takes two arguments 
 1 argument is for CSV FILE DEFINED in FILE
 2 argument is for JSON FILE
 '''
-'''
--------------------------------------------------------------------------------------------------
-PATHS FOR CSV's
--------------------------------------------------------------------------------------------------
-'''
+
+#-------------------------------------------------------------------------------------------------
+#PATHS FOR CSV's
+#-------------------------------------------------------------------------------------------------
 config = configparser.ConfigParser()
 config.sections()
 config.read('./Config/fileDistribution.ini')
@@ -23,16 +24,17 @@ PATH_TO_CSV_INVERTER_1 = config['hak.inverters']['INVERTER_1']
 PATH_TO_CSV_INVERTER_2 = config['hak.inverters']['INVERTER_2']
 PATH_TO_CSV_INVERTER_3 = config['hak.inverters']['INVERTER_3']
 PATH_OF_JSON_FILE = sys.argv[1]
-'''
--------------------------------------------------------------------------------------------------
-'''
+#-------------------------------------------------------------------------------------------------
+
 
 if PATH_OF_JSON_FILE == '':
     print('PATHS NOT DEFINED')
     sys.exit(1)
 
+
 with open(PATH_OF_JSON_FILE) as data_file:
     data = json.load(data_file)
+
 
 DATA_DICT = {'1': [], '2': [], '3': []}
 keys = ['DAY_ENERGY', 'PAC', 'TOTAL_ENERGY', 'YEAR_ENERGY']

@@ -9,6 +9,8 @@ import configparser
 from shutil import copy
 import csv
 import ntpath
+import   subprocess
+from subprocess import DEVNULL
 headers = ['File Name', 'Timestamp']
 
 #Get process id (Get the path for file check if its doe copying or downloading)
@@ -31,7 +33,6 @@ paths_list = [x[1] for x in config.items('hak.paths')]
 #Csvs paths to put files
 #--------------------------------------------------------------------------------------------
 csv_list = [x[1] for x in config.items('hak.csv')]
-#print(csv_list)
 #--------------------------------------------------------------------------------------------
 
 
@@ -100,18 +101,23 @@ while True:
                 elif ntpath.basename(newname).startswith('METER'):
                     copy(newname, paths_list[4])
                     update_csv(csv_list[4], filectime, paths_list[4] + '/' + ntpath.basename(newname))
-                    commandExe = 'start python ' + 'metercsvProcessing.py' + ' ' + '\"' + paths_list[4] + '/' + ntpath.basename(newname) + '\"'
-                    os.system(commandExe)
+                    CHG_PATH = paths_list[4]+'/'+ntpath.basename(newname)
+                    subprocess.Popen(['python3','metercsvProcessing.py',CHG_PATH])
+                    #commandExe = 'start python ' + 'metercsvProcessing.py' + ' ' + '\"' + paths_list[4] + '/' + ntpath.basename(newname) + '\"'
+                    #os.system(commandExe)
                 elif ntpath.basename(newname).startswith('INVERTER'):
                     copy(newname, paths_list[1])
                     update_csv(csv_list[1], filectime, paths_list[1] + '/' + ntpath.basename(newname))
-                    commandExe = 'start python ' + 'invertercsvProcessing.py' + ' ' + '\"' + paths_list[1] + '/' + ntpath.basename(newname) + '\"'
-                    os.system(commandExe)
+                    #commandExe = 'start python ' + 'invertercsvProcessing.py' + ' ' + '\"' + paths_list[1] + '/' + ntpath.basename(newname) + '\"'
+                    #print(paths_list[1]+'/'+ntpath.basename(newname))
+                    CHG_PATH = paths_list[1]+'/'+ntpath.basename(newname)
+                    subprocess.Popen(['python3', 'invertercsvProcessing.py', CHG_PATH])
+                    #os.system(commandExe)
                 os.remove(newname)
                 break
         time.sleep(3)
     else:
-        print('file path not exist')
+        print('file path not exist', filepath)
         break
         sys.exit(0)
 sys.exit(1)

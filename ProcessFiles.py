@@ -10,12 +10,14 @@ import time
 import csv
 import ntpath
 import os
+import   subprocess
+from subprocess import DEVNULL
 headers = ['File Name', 'Timestamp']
 
 
 #Directory path to get files
 #--------------------------------------------------------------------------------------------
-directory_path = 'C:/Users/hammad.ali/Desktop/DC'
+directory_path = '/home/inbox-dih/Desktop/REON/DC'
 #--------------------------------------------------------------------------------------------
 
 
@@ -38,7 +40,6 @@ paths_list = [x[1] for x in config.items('hak.paths')]
 #Csvs paths to put files
 #--------------------------------------------------------------------------------------------
 csv_list = [x[1] for x in config.items('hak.csv')]
-#print(csv_list)
 #--------------------------------------------------------------------------------------------
 
 
@@ -64,11 +65,18 @@ def update_csv(path, timeoffile, pathName):
 #--------------------------------------------------------------------------------------------
 
 
+#Start a independent process
+#--------------------------------------------------------------------------------------------
+def open_process(fileName, PATH):
+    subprocess.Popen(['python3', fileName, PATH])
+#--------------------------------------------------------------------------------------------
+
+
 #Check for each directory existence
 #--------------------------------------------------------------------------------------------
 for paths in paths_list:
     if not os.path.isdir(paths):
-        print('Provided directory for some variable not exist')
+        print('Provided directory for some variable not exist',paths)
         sys.exit(1)
 #--------------------------------------------------------------------------------------------
 
@@ -83,9 +91,8 @@ for file in os.listdir(directory_path):
     if 'SENSOR' in newname:
         countFiles[0] += 1
         copy(newname, paths_list[3])
-        update_csv(csv_list[3], filectime, paths_list[3]+'/'+ntpath.basename(newname))
-        commandExe = 'start python ' + 'sensorcsvProcessing.py' + ' ' + '\"' + paths_list[3] + '/' + ntpath.basename(newname) + '\"'
-        os.system(commandExe)
+        open_process('sensorcsvProcessing.py', paths_list[3]+'/'+ntpath.basename(newname))
+        update_csv(csv_list[3], filectime, paths_list[3] + '/' + ntpath.basename(newname))
     elif 'LOG' in newname:
         countFiles[1] += 1
         copy(newname, paths_list[2])
@@ -97,14 +104,12 @@ for file in os.listdir(directory_path):
     elif ntpath.basename(newname).startswith('METER'):
         countFiles[4] += 1
         copy(newname, paths_list[4])
-        commandExe = 'start python '+'metercsvProcessing.py' + ' ' + '\"' + paths_list[4] + '/' + ntpath.basename(newname) + '\"'
-        os.system(commandExe)
+        open_process('metercsvProcessing.py', paths_list[4] + '/' + ntpath.basename(newname))
         update_csv(csv_list[4], filectime, paths_list[4]+'/'+ntpath.basename(newname))
     elif ntpath.basename(newname).startswith('INVERTER'):
         countFiles[3] += 1
         copy(newname, paths_list[1])
-        commandExe = 'start python '+'invertercsvProcessing.py'+' '+'\"'+paths_list[1]+'/'+ntpath.basename(newname)+'\"'
-        os.system(commandExe)
+        open_process('invertercsvProcessing.py', paths_list[1] + '/' + ntpath.basename(newname))
         update_csv(csv_list[1], filectime, paths_list[1]+'/'+ntpath.basename(newname))
     os.remove(newname)
 #--------------------------------------------------------------------------------------------
