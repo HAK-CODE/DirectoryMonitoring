@@ -30,11 +30,8 @@ def CheckOldData():
 1 argument is for CSV FILE DEFINED in FILE
 2 argument is for JSON FILE
 '''
-'''
--------------------------------------------------------------------------------------------------
-PATHS FOR CSV's
--------------------------------------------------------------------------------------------------
-'''
+#PATHS FOR CSV's
+#-------------------------------------------------------------------------------------------------
 config = configparser.ConfigParser()
 config.sections()
 config.read('./Config/fileDistribution.ini')
@@ -43,25 +40,20 @@ PATH_TO_CSV_SENSOR_INVERTER_1 = config['hak.sensors']['SENSOR_INVERTER_1']
 PATH_TO_CSV_SENSOR_INVERTER_2 = config['hak.sensors']['SENSOR_INVERTER_2']
 PATH_TO_CSV_SENSOR_INVERTER_3 = config['hak.sensors']['SENSOR_INVERTER_3']
 PATH_OF_JSON_FILE = sys.argv[1]
-#print(PATH_TO_CSV_SENSOR_AGGREGATED)
-#print(PATH_TO_CSV_SENSOR_INVERTER_1)
-#print(PATH_TO_CSV_SENSOR_INVERTER_2)
-#print(PATH_TO_CSV_SENSOR_INVERTER_3)
-'''
--------------------------------------------------------------------------------------------------
-'''
+#-------------------------------------------------------------------------------------------------
+
+
 
 if PATH_OF_JSON_FILE == '':
     print('PATHS NOT DEFINED')
     sys.exit(1)
 
-'''
--------------------------------------------------------------------------------------------------
-JSON file for parsing data
--------------------------------------------------------------------------------------------------
-'''
-with open(PATH_OF_JSON_FILE) as data_file:
+
+#JSON file for parsing data
+#-------------------------------------------------------------------------------------------------
+with open(PATH_OF_JSON_FILE, encoding='utf-8', errors='ignore') as data_file:
     data = json.load(data_file)
+
 
 
 DATA_DICT = {'10': 0, '11': 0, '12': 0, '14': 0, '20': 0, '30': 0}

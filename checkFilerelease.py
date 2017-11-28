@@ -9,7 +9,7 @@ import configparser
 from shutil import copy
 import csv
 import ntpath
-import   subprocess
+import subprocess
 from subprocess import DEVNULL
 headers = ['File Name', 'Timestamp']
 
@@ -47,35 +47,35 @@ for paths in paths_list:
 
 #Update csv for files added
 #--------------------------------------------------------------------------------------------
-def update_csv(path, timeoffile, pathName):
-    csvfile = None
+def update_csv(path, timeOfFile, pathName):
+    csvFile = None
     while True:
         try:
-            csvfile = open(path, 'a')
-            if csvfile:
-                csvfile = open(path, 'a')
-                writercsv = csv.DictWriter(csvfile, delimiter=',', lineterminator='\n', fieldnames=headers)
+            csvFile = open(path, 'a')
+            if csvFile:
+                csvFile = open(path, 'a')
+                writercsv = csv.DictWriter(csvFile, delimiter=',', lineterminator='\n', fieldnames=headers)
                 writercsv.writerow({'File Name': str(pathName),
-                                    'Timestamp': timeoffile})
-                print('csv file not locked')
+                                    'Timestamp': timeOfFile})
+                print('CSV file not locked', csvFile.name)
         except OSError:
-            print('csv locked')
+            print('csv locked', csvFile.name)
         finally:
-            if csvfile:
-                print('CSV file written and closed.')
-                csvfile.close()
+            if csvFile:
+                print('CSV file written and closed', csvFile.name)
+                csvFile.close()
                 break
-        time.sleep(3)
+        time.sleep(2)
 # --------------------------------------------------------------------------------------------
 
 
-#keep running untill a process releases file
+#keep running until a process releases file
 #---------------------------------------------------------------------------------------------
-while True:
-    if os.path.exists(filepath):
+if os.path.exists(filepath):
+    while True:
         try:
             fileObj = open(filepath, 'a')
-            print('trying to open file ',filepath)
+            print('trying to open file',filepath)
             if fileObj:
                 print('file not locked',filepath)
         except OSError:
@@ -83,15 +83,13 @@ while True:
         finally:
             if fileObj:
                 fileObj.close()
-                csvfile = None
                 newname = filepath.replace('.js', '.json') if '.json' not in filepath else filepath
                 filectime = time.ctime(os.path.getmtime(filepath))
                 os.rename(filepath, newname)
                 if 'SENSOR' in newname:
                     copy(newname, paths_list[3])
                     update_csv(csv_list[3], filectime, paths_list[3] + '/' + ntpath.basename(newname))
-                    commandExe = 'start python ' + 'sensorcsvProcessing.py' + ' ' + '\"' + paths_list[3] + '/' + ntpath.basename(newname) + '\"'
-                    os.system(commandExe)
+                    subprocess.Popen(['python3', 'sensorcsvProcessing.py', paths_list[3] + '/' + ntpath.basename(newname)])
                 elif 'LOG' in newname:
                     copy(newname, paths_list[2])
                     update_csv(csv_list[2], filectime, paths_list[2] + '/' + ntpath.basename(newname))
@@ -101,24 +99,16 @@ while True:
                 elif ntpath.basename(newname).startswith('METER'):
                     copy(newname, paths_list[4])
                     update_csv(csv_list[4], filectime, paths_list[4] + '/' + ntpath.basename(newname))
-                    CHG_PATH = paths_list[4]+'/'+ntpath.basename(newname)
-                    subprocess.Popen(['python3','metercsvProcessing.py',CHG_PATH])
-                    #commandExe = 'start python ' + 'metercsvProcessing.py' + ' ' + '\"' + paths_list[4] + '/' + ntpath.basename(newname) + '\"'
-                    #os.system(commandExe)
+                    subprocess.Popen(['python3', 'metercsvProcessing.py', paths_list[4]+'/'+ntpath.basename(newname)])
                 elif ntpath.basename(newname).startswith('INVERTER'):
                     copy(newname, paths_list[1])
                     update_csv(csv_list[1], filectime, paths_list[1] + '/' + ntpath.basename(newname))
-                    #commandExe = 'start python ' + 'invertercsvProcessing.py' + ' ' + '\"' + paths_list[1] + '/' + ntpath.basename(newname) + '\"'
-                    #print(paths_list[1]+'/'+ntpath.basename(newname))
-                    CHG_PATH = paths_list[1]+'/'+ntpath.basename(newname)
-                    subprocess.Popen(['python3', 'invertercsvProcessing.py', CHG_PATH])
-                    #os.system(commandExe)
+                    subprocess.Popen(['python3', 'invertercsvProcessing.py', paths_list[1]+'/'+ntpath.basename(newname)])
                 os.remove(newname)
                 break
-        time.sleep(3)
-    else:
-        print('file path not exist', filepath)
-        break
-        sys.exit(0)
-sys.exit(1)
+        time.sleep(2)
+    sys.exit(1)
+else:
+   print('file path not exist', filepath)
+   sys.exit(0)
 #----------------------------------------------------------------------------------------------

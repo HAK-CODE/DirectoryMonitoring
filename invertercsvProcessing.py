@@ -13,7 +13,6 @@ inverter csv. It takes two arguments
 2 argument is for JSON FILE
 '''
 
-#-------------------------------------------------------------------------------------------------
 #PATHS FOR CSV's
 #-------------------------------------------------------------------------------------------------
 config = configparser.ConfigParser()
@@ -27,8 +26,10 @@ PATH_OF_JSON_FILE = sys.argv[1]
 #-------------------------------------------------------------------------------------------------
 
 
+#JSON file for parsing data
+#-------------------------------------------------------------------------------------------------
 if PATH_OF_JSON_FILE == '':
-    print('PATHS NOT DEFINED')
+    print('PATH TO JSON FILE NOT DEFINED')
     sys.exit(1)
 
 
@@ -69,11 +70,11 @@ df_3 = pd.DataFrame(rows[2]).transpose()
 JOB_SCHEDULE = [[PATH_TO_CSV_INVERTER_1, df_1], [PATH_TO_CSV_INVERTER_2, df_2], [PATH_TO_CSV_INVERTER_3, df_3]]
 fileObj = None
 count = 0
-while True:
-    if os.path.exists(PATH_TO_CSV_INVERTER_AGGREGATED) \
+if os.path.exists(PATH_TO_CSV_INVERTER_AGGREGATED) \
             and os.path.exists(PATH_TO_CSV_INVERTER_1) \
             and os.path.exists(PATH_TO_CSV_INVERTER_2) \
             and os.path.exists(PATH_TO_CSV_INVERTER_3):
+    while True:
         try:
             if count == 0:
                 fileObj = open(PATH_TO_CSV_INVERTER_AGGREGATED, 'a')
@@ -95,13 +96,13 @@ while True:
                 print('file is locked',JOB_SCHEDULE[count - 1][0])
         finally:
             if fileObj:
-                print('written and closed ', fileObj.name)
+                print('written and closed ',fileObj.name)
                 fileObj.close()
                 count += 1
                 if count > 3:
                     break
-    else:
-        print('One of path not exist')
-        break
-    time.sleep(3)
-sys.exit(1)
+        time.sleep(2)
+    sys.exit(1)
+else:
+    print('One of path not exist')
+    sys.exit(0)
