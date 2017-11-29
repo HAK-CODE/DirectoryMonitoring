@@ -8,6 +8,7 @@ import predix
 import datetime
 import predix.data.timeseries
 import configparser
+from colorama import Fore
 
 app = predix.app.Manifest('./Config/manifest.yml')
 ts =app.get_timeseries()
@@ -45,14 +46,13 @@ PATH_OF_JSON_FILE = sys.argv[1]
 
 
 if PATH_OF_JSON_FILE == '':
-    print('PATHS NOT DEFINED')
+    print(Fore.YELLOW,'PATH TO JSON FILE NOT DEFINED', Fore.RESET)
     sys.exit(1)
 
 
 #JSON file for parsing data
 #-------------------------------------------------------------------------------------------------
-with open(PATH_OF_JSON_FILE, encoding='utf-8', errors='ignore') as data_file:
-    data = json.load(data_file)
+data = json.load(open(PATH_OF_JSON_FILE, mode='r', encoding='utf-8', errors='ignore'))
 
 
 
@@ -107,11 +107,11 @@ df_s3 = pd.DataFrame.from_records([SENSOR_INDIVIDUAL_3], index='30')
 df_list = [df_s1, df_s2, df_s3]
 
 
-
 CheckOldData()
 df_s1_p = pd.DataFrame.from_records([SENSOR_INDIVIDUAL_1], index='Timestamp')
 df_s2_p = pd.DataFrame.from_records([SENSOR_INDIVIDUAL_2], index='Timestamp')
 df_s3_p = pd.DataFrame.from_records([SENSOR_INDIVIDUAL_3], index='Timestamp')
+
 
 df_for_predix = [df_s1_p, df_s2_p, df_s3_p]
 with open("Config/Tags.csv", "r") as file:
@@ -151,30 +151,31 @@ while True:
         try:
             if count == 0:
                 fileObj = open(PATH_TO_CSV_SENSOR_AGGREGATED, 'a')
-                print('trying to open file ', PATH_TO_CSV_SENSOR_AGGREGATED)
+                print('trying to open file', PATH_TO_CSV_SENSOR_AGGREGATED)
             else:
                 fileObj = open(JOB_SCHEDULE[count - 1][0], 'a')
-                print('trying to open file ', JOB_SCHEDULE[count - 1][0])
+                print('trying to open file', JOB_SCHEDULE[count - 1][0])
             if fileObj:
                 if count == 0:
-                    print('file not locked', PATH_TO_CSV_SENSOR_AGGREGATED)
+                    print(Fore.GREEN,'file not locked', PATH_TO_CSV_SENSOR_AGGREGATED, Fore.RESET)
                     df.to_csv(PATH_TO_CSV_SENSOR_AGGREGATED, mode='a', header=False)
                 else:
-                    print('file not locked', JOB_SCHEDULE[count - 1][0])
+                    print(Fore.GREEN,'file not locked', JOB_SCHEDULE[count - 1][0], Fore.RESET)
                     JOB_SCHEDULE[count - 1][1].to_csv(JOB_SCHEDULE[count - 1][0], mode='a', header=False)
         except OSError:
             if count == 0:
-                print('file is locked', PATH_TO_CSV_SENSOR_AGGREGATED)
+                print(Fore.RED,'file is locked', PATH_TO_CSV_SENSOR_AGGREGATED, Fore.RESET)
             else:
-                print('file is locked', JOB_SCHEDULE[count - 1][0])
+                print(Fore.RED,'file is locked', JOB_SCHEDULE[count - 1][0], Fore.RESET)
         finally:
             if fileObj:
                 fileObj.close()
+                print(Fore.GREEN, 'written and closed', fileObj.name, Fore.RESET)
                 count += 1
                 if count > 3:
                     break
     else:
-        print('One of path not exist')
+        print(Fore.RED,'One of path not exist', Fore.RESET)
         break
     time.sleep(3)
 sys.exit(1)

@@ -5,6 +5,7 @@ import sys
 import time
 import os
 import configparser
+from colorama import Fore
 
 '''
 This file is used to process inverter file and distribute data to particular
@@ -29,12 +30,11 @@ PATH_OF_JSON_FILE = sys.argv[1]
 #JSON file for parsing data
 #-------------------------------------------------------------------------------------------------
 if PATH_OF_JSON_FILE == '':
-    print('PATH TO JSON FILE NOT DEFINED')
+    print(Fore.YELLOW,'PATH TO JSON FILE NOT DEFINED', Fore.RESET)
     sys.exit(1)
 
 
-with open(PATH_OF_JSON_FILE) as data_file:
-    data = json.load(data_file)
+data = json.load(open(PATH_OF_JSON_FILE, mode='r'))
 
 
 DATA_DICT = {'1': [], '2': [], '3': []}
@@ -84,25 +84,25 @@ if os.path.exists(PATH_TO_CSV_INVERTER_AGGREGATED) \
                 print('trying to open file ', JOB_SCHEDULE[count - 1][0])
             if fileObj:
                 if count == 0:
-                    print('file not locked',PATH_TO_CSV_INVERTER_AGGREGATED)
+                    print(Fore.GREEN,'file not locked',PATH_TO_CSV_INVERTER_AGGREGATED, Fore.RESET)
                     df.to_csv(PATH_TO_CSV_INVERTER_AGGREGATED, mode='a', header=False)
                 else:
-                    print('file not locked', JOB_SCHEDULE[count - 1][0])
+                    print(Fore.GREEN,'file not locked', JOB_SCHEDULE[count - 1][0], Fore.RESET)
                     JOB_SCHEDULE[count - 1][1].to_csv(JOB_SCHEDULE[count - 1][0], mode='a', header=False, index=False)
         except OSError:
             if count == 0:
-                print('file is locked',PATH_TO_CSV_INVERTER_AGGREGATED)
+                print(Fore.RED,'file is locked',PATH_TO_CSV_INVERTER_AGGREGATED, Fore.RESET)
             else:
-                print('file is locked',JOB_SCHEDULE[count - 1][0])
+                print(Fore.RED,'file is locked',JOB_SCHEDULE[count - 1][0], Fore.RESET)
         finally:
             if fileObj:
-                print('written and closed ',fileObj.name)
                 fileObj.close()
+                print(Fore.GREEN, 'written and closed', fileObj.name, Fore.RESET)
                 count += 1
                 if count > 3:
                     break
         time.sleep(2)
     sys.exit(1)
 else:
-    print('One of path not exist')
+    print(Fore.RED,'One of path not exist', Fore.RESET)
     sys.exit(0)

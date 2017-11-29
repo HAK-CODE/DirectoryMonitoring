@@ -10,8 +10,8 @@ from     fileInfo           import FILE_INFO
 from     directoryInfo      import PATH_INFO_PROVIDER
 from     server             import TCPSERVER
 import   configparser
-import   os
 import   subprocess
+from     colorama import Fore
 from subprocess import DEVNULL
 
 '''
@@ -69,23 +69,24 @@ class Handler(FileSystemEventHandler):
                 DIR = PATH_INFO_PROVIDER(PATH)
                 if self.server != None:
                     self.send_info(DIR.DIRBASIC(), True)
-                print('----------------------------- NEW DIRECTORY CREATED -----------------------------')
-                print("PATH  : ", DIR.DIRBASIC()[0])
-                print("NAME  : ", DIR.DIRBASIC()[1])
-                print("CTIME : ", DIR.DIRBASIC()[2])
-                print("SIZE  : ", DIR.DIRBASIC()[3], "BYTES")
-                print('---------------------------------------------------------------------------------')
+                print(Fore.LIGHTCYAN_EX,'----------------------------- NEW DIRECTORY CREATED -----------------------------')
+                print(Fore.LIGHTCYAN_EX,"PATH  : ", DIR.DIRBASIC()[0])
+                print(Fore.LIGHTCYAN_EX,"NAME  : ", DIR.DIRBASIC()[1])
+                print(Fore.LIGHTCYAN_EX,"CTIME : ", DIR.DIRBASIC()[2])
+                print(Fore.LIGHTCYAN_EX,"SIZE  : ", DIR.DIRBASIC()[3], "BYTES")
+                print(Fore.LIGHTCYAN_EX,'---------------------------------------------------------------------------------',Fore.RESET)
             else:
                 FILE = FILE_INFO(event.src_path)
                 if self.server != None:
                     self.send_info(FILE.FILEBASIC(), False)
+                print(Fore.LIGHTCYAN_EX)
                 print('-------------------------------- NEW FILE CREATED -------------------------------')
                 print("PATH  : ", FILE.FILEBASIC()[0])
                 print("NAME  : ", FILE.FILEBASIC()[1])
                 print("EXT   : ", FILE.FILEBASIC()[2])
                 print("CTIME : ", FILE.FILEBASIC()[3])
                 print("SIZE  : ", FILE.FILEBASIC()[4], "BYTES")
-                print('---------------------------------------------------------------------------------')
+                print('---------------------------------------------------------------------------------',Fore.RESET)
                 CHG_PATH = '\"' + event.src_path + '\"' if ' ' in event.src_path else event.src_path
                 subprocess.Popen(['python3','checkFilerelease.py',CHG_PATH])
 

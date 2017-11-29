@@ -4,6 +4,7 @@ import sys
 import time
 import os
 import configparser
+from colorama import Fore
 
 '''
 1 argument is for CSV FILE DEFINED in FILE
@@ -23,14 +24,13 @@ PATH_OF_JSON_FILE = sys.argv[1]
 #JSON file for parsing data
 #-------------------------------------------------------------------------------------------------
 if PATH_OF_JSON_FILE == '':
-    print('PATHS NOT DEFINED')
+    print(Fore.YELLOW,'PATH TO JSON FILE NOT DEFINED', Fore.RESET)
     sys.exit(1)
 
 
 #JSON file for parsing data
 #-------------------------------------------------------------------------------------------------
-with open(PATH_OF_JSON_FILE) as data_file:
-    data = json.load(data_file)
+data = json.load(open(PATH_OF_JSON_FILE, mode='r'))
 
 
 DATA_DICT = {'Code': "", 'Reason': "", 'UserMessage': "", 'Timestamp': ""}
@@ -55,16 +55,17 @@ if os.path.exists(PATH_TO_CSV_METER_AGGREGATED):
             fileObj = open(PATH_TO_CSV_METER_AGGREGATED, 'a')
             print('trying to open file ', PATH_TO_CSV_METER_AGGREGATED)
             if fileObj:
-                print('file not locked', PATH_TO_CSV_METER_AGGREGATED)
+                print(Fore.GREEN,'file not locked', PATH_TO_CSV_METER_AGGREGATED)
                 df.to_csv(PATH_TO_CSV_METER_AGGREGATED, mode='a', header=False)
         except OSError:
-            print('file is locked', PATH_TO_CSV_METER_AGGREGATED)
+            print(Fore.RED,'file is locked', PATH_TO_CSV_METER_AGGREGATED, Fore.RESET)
         finally:
             if fileObj:
                 fileObj.close()
+                print(Fore.GREEN, 'written and closed', fileObj.name, Fore.RESET)
                 break
         time.sleep(2)
-    sys.exit(1)
+    sys.exit()
 else:
-    print('file path not exist', PATH_TO_CSV_METER_AGGREGATED)
+    print(Fore.RED,'file path not exist', PATH_TO_CSV_METER_AGGREGATED, Fore.RESET)
     sys.exit(0)

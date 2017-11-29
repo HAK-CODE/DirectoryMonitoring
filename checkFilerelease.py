@@ -11,6 +11,7 @@ import csv
 import ntpath
 import subprocess
 from subprocess import DEVNULL
+from colorama import Fore
 headers = ['File Name', 'Timestamp']
 
 #Get process id (Get the path for file check if its doe copying or downloading)
@@ -57,19 +58,19 @@ def update_csv(path, timeOfFile, pathName):
                 writercsv = csv.DictWriter(csvFile, delimiter=',', lineterminator='\n', fieldnames=headers)
                 writercsv.writerow({'File Name': str(pathName),
                                     'Timestamp': timeOfFile})
-                print('CSV file not locked', csvFile.name)
+                print(Fore.GREEN,'CSV file not locked', csvFile.name, Fore.RESET)
         except OSError:
             print('csv locked', csvFile.name)
         finally:
             if csvFile:
-                print('CSV file written and closed', csvFile.name)
+                print(Fore.GREEN,'CSV file written and closed', csvFile.name, Fore.RESET)
                 csvFile.close()
                 break
         time.sleep(2)
 # --------------------------------------------------------------------------------------------
 
 
-#keep running until a process releases file
+# Keep running until a process releases file
 #---------------------------------------------------------------------------------------------
 if os.path.exists(filepath):
     while True:
@@ -77,15 +78,19 @@ if os.path.exists(filepath):
             fileObj = open(filepath, 'a')
             print('trying to open file',filepath)
             if fileObj:
-                print('file not locked',filepath)
+                print(Fore.GREEN,'file not locked',filepath,Fore.RESET)
         except OSError:
-            print('file is locked',filepath)
+            print(Fore.GREEN,'file is locked',filepath,Fore.RESET)
         finally:
             if fileObj:
                 fileObj.close()
+
+                # Convert file from .js to .json and get file creation time
                 newname = filepath.replace('.js', '.json') if '.json' not in filepath else filepath
                 filectime = time.ctime(os.path.getmtime(filepath))
                 os.rename(filepath, newname)
+
+                # Start a new process based on file type (name)
                 if 'SENSOR' in newname:
                     copy(newname, paths_list[3])
                     update_csv(csv_list[3], filectime, paths_list[3] + '/' + ntpath.basename(newname))
