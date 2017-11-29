@@ -1,3 +1,8 @@
+'''
+author: HAK
+time  : 02:00 AM, 07/11/2017
+'''
+
 import json
 import numpy as np
 import pandas as pd
@@ -7,7 +12,7 @@ import os
 import predix
 import datetime
 import predix.data.timeseries
-import configparser
+from Config import ConfigPaths
 from colorama import Fore
 
 app = predix.app.Manifest('./Config/manifest.yml')
@@ -33,13 +38,10 @@ def CheckOldData():
 '''
 #PATHS FOR CSV's
 #-------------------------------------------------------------------------------------------------
-config = configparser.ConfigParser()
-config.sections()
-config.read('./Config/fileDistribution.ini')
-PATH_TO_CSV_SENSOR_AGGREGATED = config['hak.aggregated.csv']['SENSORS_AGGREGATED_CSV']
-PATH_TO_CSV_SENSOR_INVERTER_1 = config['hak.sensors']['SENSOR_INVERTER_1']
-PATH_TO_CSV_SENSOR_INVERTER_2 = config['hak.sensors']['SENSOR_INVERTER_2']
-PATH_TO_CSV_SENSOR_INVERTER_3 = config['hak.sensors']['SENSOR_INVERTER_3']
+PATH_TO_CSV_SENSOR_AGGREGATED = ConfigPaths.config['hak.aggregated.csv']['SENSORS_AGGREGATED_CSV']
+PATH_TO_CSV_SENSOR_INVERTER_1 = ConfigPaths.config['hak.sensors']['SENSOR_INVERTER_1']
+PATH_TO_CSV_SENSOR_INVERTER_2 = ConfigPaths.config['hak.sensors']['SENSOR_INVERTER_2']
+PATH_TO_CSV_SENSOR_INVERTER_3 = ConfigPaths.config['hak.sensors']['SENSOR_INVERTER_3']
 PATH_OF_JSON_FILE = sys.argv[1]
 #-------------------------------------------------------------------------------------------------
 

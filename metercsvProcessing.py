@@ -1,9 +1,14 @@
+'''
+author: HAK
+time  : 02:00 AM, 07/11/2017
+'''
+
 import json
 import pandas as pd
 import sys
 import time
 import os
-import configparser
+from Config import ConfigPaths
 from colorama import Fore
 
 '''
@@ -13,10 +18,7 @@ from colorama import Fore
 
 #PATHS FOR CSV's
 #-------------------------------------------------------------------------------------------------
-config = configparser.ConfigParser()
-config.sections()
-config.read('./Config/fileDistribution.ini')
-PATH_TO_CSV_METER_AGGREGATED = config['hak.aggregated.csv']['METER_AGGREGATED_CSV']
+PATH_TO_CSV_METER_AGGREGATED = ConfigPaths.config['hak.aggregated.csv']['METER_AGGREGATED_CSV']
 PATH_OF_JSON_FILE = sys.argv[1]
 #-------------------------------------------------------------------------------------------------
 

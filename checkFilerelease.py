@@ -5,7 +5,7 @@ time  : 11:00 PM, 05/11/2017
 
 import os, time
 import sys
-import configparser
+from Config import ConfigPaths
 from shutil import copy
 import csv
 import ntpath
@@ -24,16 +24,13 @@ fileObj = None
 
 #Directories paths to put files
 #--------------------------------------------------------------------------------------------
-config = configparser.ConfigParser()
-config.sections()
-config.read('./Config/fileDistribution.ini')
-paths_list = [x[1] for x in config.items('hak.paths')]
+paths_list = [x[1] for x in ConfigPaths.config.items('hak.paths')]
 #--------------------------------------------------------------------------------------------
 
 
 #Csvs paths to put files
 #--------------------------------------------------------------------------------------------
-csv_list = [x[1] for x in config.items('hak.csv')]
+csv_list = [x[1] for x in ConfigPaths.config.items('hak.csv')]
 #--------------------------------------------------------------------------------------------
 
 

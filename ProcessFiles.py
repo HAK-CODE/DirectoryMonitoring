@@ -3,14 +3,14 @@ author: HAK
 time  : 11:00 PM, 09/11/2017
 '''
 
-import configparser
 import sys
 from shutil import copy
 import time
 import csv
 import ntpath
 import os
-import   subprocess
+import subprocess
+from Config import ConfigPaths
 from subprocess import DEVNULL
 headers = ['File Name', 'Timestamp']
 
@@ -30,16 +30,13 @@ if not os.path.isdir(directory_path):
 
 #Directories paths to put files
 #--------------------------------------------------------------------------------------------
-config = configparser.ConfigParser()
-config.sections()
-config.read('./Config/fileDistribution.ini')
-paths_list = [x[1] for x in config.items('hak.paths')]
+paths_list = [x[1] for x in ConfigPaths.config.items('hak.paths')]
 #--------------------------------------------------------------------------------------------
 
 
 #Csvs paths to put files
 #--------------------------------------------------------------------------------------------
-csv_list = [x[1] for x in config.items('hak.csv')]
+csv_list = [x[1] for x in ConfigPaths.config.items('hak.csv')]
 #--------------------------------------------------------------------------------------------
 
 
