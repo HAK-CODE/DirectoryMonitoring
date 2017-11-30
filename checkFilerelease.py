@@ -38,7 +38,7 @@ csv_list = [x[1] for x in ConfigPaths.config.items('hak.csv')]
 #--------------------------------------------------------------------------------------------
 for paths in paths_list:
     if not os.path.isdir(paths):
-        print('Provided directory for some variable not exist '+paths)
+        print(Fore.RED,'Provided directory for some variable not exist '+paths,Fore.RESET)
         sys.exit(0)
 #--------------------------------------------------------------------------------------------
 
