@@ -35,13 +35,11 @@ if PATH_OF_JSON_FILE == '':
     print(Fore.YELLOW,'PATH TO JSON FILE NOT DEFINED', Fore.RESET)
     sys.exit(1)
 
-
 data = json.load(open(PATH_OF_JSON_FILE, mode='r'))
-
 
 DATA_DICT = {'1': [], '2': [], '3': []}
 keys = ['DAY_ENERGY', 'PAC', 'TOTAL_ENERGY', 'YEAR_ENERGY']
-
+flag = True
 
 for items in keys:
     json_data = (data['Body'][items]['Values'])
@@ -50,15 +48,11 @@ for items in keys:
             DATA_DICT[dict_key].append(json_data[dict_key])
         else:
             DATA_DICT[dict_key].append(np.nan)
+        if flag:
+            DATA_DICT[dict_key].append(data['Head']['Timestamp'])
+    flag = False
 
-
-for keys in DATA_DICT:
-    DATA_DICT[keys].append(data['Head']['Timestamp'])
-
-
-df = pd.DataFrame(DATA_DICT)
-df = df.transpose()
-
+df = pd.DataFrame(DATA_DICT).transpose()[[0,2,3,4,1]]
 rows = []
 
 for row in df.iterrows():
@@ -69,7 +63,7 @@ df_1 = pd.DataFrame(rows[0]).transpose()
 df_2 = pd.DataFrame(rows[1]).transpose()
 df_3 = pd.DataFrame(rows[2]).transpose()
 
-JOB_SCHEDULE = [[PATH_TO_CSV_INVERTER_1, df_1], [PATH_TO_CSV_INVERTER_2, df_2], [PATH_TO_CSV_INVERTER_3, df_3]]
+JOB_SCHEDULE = [[PATH_TO_CSV_INVERTER_AGGREGATED, df],[PATH_TO_CSV_INVERTER_1, df_1], [PATH_TO_CSV_INVERTER_2, df_2], [PATH_TO_CSV_INVERTER_3, df_3]]
 fileObj = None
 count = 0
 if os.path.exists(PATH_TO_CSV_INVERTER_AGGREGATED) \
@@ -78,24 +72,13 @@ if os.path.exists(PATH_TO_CSV_INVERTER_AGGREGATED) \
             and os.path.exists(PATH_TO_CSV_INVERTER_3):
     while True:
         try:
-            if count == 0:
-                fileObj = open(PATH_TO_CSV_INVERTER_AGGREGATED, 'a')
-                print('trying to open file ',PATH_TO_CSV_INVERTER_AGGREGATED)
-            else:
-                fileObj = open(JOB_SCHEDULE[count - 1][0], 'a')
-                print('trying to open file ', JOB_SCHEDULE[count - 1][0])
+            fileObj = open(JOB_SCHEDULE[count][0], 'a')
+            print('trying to open file', JOB_SCHEDULE[count][0])
             if fileObj:
-                if count == 0:
-                    print(Fore.GREEN,'file not locked',PATH_TO_CSV_INVERTER_AGGREGATED, Fore.RESET)
-                    df.to_csv(PATH_TO_CSV_INVERTER_AGGREGATED, mode='a', header=False)
-                else:
-                    print(Fore.GREEN,'file not locked', JOB_SCHEDULE[count - 1][0], Fore.RESET)
-                    JOB_SCHEDULE[count - 1][1].to_csv(JOB_SCHEDULE[count - 1][0], mode='a', header=False, index=False)
+                print(Fore.GREEN,'file not locked', JOB_SCHEDULE[count][0], Fore.RESET)
+                JOB_SCHEDULE[count][1].to_csv(JOB_SCHEDULE[count][0], mode='a', header=False, index=True if count == 0 else False)
         except OSError:
-            if count == 0:
-                print(Fore.RED,'file is locked',PATH_TO_CSV_INVERTER_AGGREGATED, Fore.RESET)
-            else:
-                print(Fore.RED,'file is locked',JOB_SCHEDULE[count - 1][0], Fore.RESET)
+            print(Fore.RED,'file is locked',JOB_SCHEDULE[count][0], Fore.RESET)
         finally:
             if fileObj:
                 fileObj.close()

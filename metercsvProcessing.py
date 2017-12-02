@@ -16,25 +16,27 @@ from colorama import Fore
 2 argument is for JSON FILE
 '''
 
-#PATHS FOR CSV's
+# PATHS FOR CSV's
 #-------------------------------------------------------------------------------------------------
 PATH_TO_CSV_METER_AGGREGATED = ConfigPaths.config['hak.aggregated.csv']['METER_AGGREGATED_CSV']
 PATH_OF_JSON_FILE = sys.argv[1]
 #-------------------------------------------------------------------------------------------------
 
 
-#JSON file for parsing data
+# JSON file for parsing data
 #-------------------------------------------------------------------------------------------------
 if PATH_OF_JSON_FILE == '':
     print(Fore.YELLOW,'PATH TO JSON FILE NOT DEFINED', Fore.RESET)
     sys.exit(1)
 
 
-#JSON file for parsing data
+# JSON file for parsing data
 #-------------------------------------------------------------------------------------------------
 data = json.load(open(PATH_OF_JSON_FILE, mode='r'))
 
 
+# DATA DICTIONARY for creating dataframe
+#-------------------------------------------------------------------------------------------------
 DATA_DICT = {'Code': "", 'Reason': "", 'UserMessage': "", 'Timestamp': ""}
 json_data = (data['Head']['Status'])
 
@@ -67,7 +69,7 @@ if os.path.exists(PATH_TO_CSV_METER_AGGREGATED):
                 print(Fore.GREEN, 'written and closed', fileObj.name, Fore.RESET)
                 break
         time.sleep(2)
-    sys.exit()
+    sys.exit(1)
 else:
     print(Fore.RED,'file path not exist', PATH_TO_CSV_METER_AGGREGATED, Fore.RESET)
     sys.exit(0)
