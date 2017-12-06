@@ -13,6 +13,7 @@ import datetime
 from Config import ConfigPaths, predixConnection
 from colorama import Fore
 
+
 def CheckOldData():
     try:
         with open("DefaultDataStore/Default_Store.csv" , "r") as file:
@@ -35,9 +36,7 @@ def CheckOldData():
 #PATHS FOR CSV's
 #-------------------------------------------------------------------------------------------------
 PATH_TO_CSV_SENSOR_AGGREGATED = ConfigPaths.config['hak.aggregated.csv']['SENSORS_AGGREGATED_CSV']
-PATH_TO_CSV_SENSOR_INVERTER_1 = ConfigPaths.config['hak.sensors']['SENSOR_INVERTER_1']
-PATH_TO_CSV_SENSOR_INVERTER_2 = ConfigPaths.config['hak.sensors']['SENSOR_INVERTER_2']
-PATH_TO_CSV_SENSOR_INVERTER_3 = ConfigPaths.config['hak.sensors']['SENSOR_INVERTER_3']
+PATH_TO_CSV_SENSOR_INVERTERS = sorted(list(dict(ConfigPaths.config.items('hak.sensors')).values()))
 PATH_OF_JSON_FILE = sys.argv[1]
 #-------------------------------------------------------------------------------------------------
 
@@ -162,13 +161,13 @@ for i in df_for_predix:
 #-------------------------------------------------------------------------------------------------
 
 
-JOB_SCHEDULE = [[PATH_TO_CSV_SENSOR_AGGREGATED, df], [PATH_TO_CSV_SENSOR_INVERTER_1, df_s1], [PATH_TO_CSV_SENSOR_INVERTER_2, df_s2], [PATH_TO_CSV_SENSOR_INVERTER_3, df_s3]]
+JOB_SCHEDULE = [[PATH_TO_CSV_SENSOR_AGGREGATED, df], [PATH_TO_CSV_SENSOR_INVERTERS[0], df_s1], [PATH_TO_CSV_SENSOR_INVERTERS[1], df_s2], [PATH_TO_CSV_SENSOR_INVERTERS[2], df_s3]]
 fileObj = None
 count = 0
 if os.path.exists(PATH_TO_CSV_SENSOR_AGGREGATED) \
-        and os.path.exists(PATH_TO_CSV_SENSOR_INVERTER_1) \
-        and os.path.exists(PATH_TO_CSV_SENSOR_INVERTER_2) \
-        and os.path.exists(PATH_TO_CSV_SENSOR_INVERTER_3):
+        and os.path.exists(PATH_TO_CSV_SENSOR_INVERTERS[0]) \
+        and os.path.exists(PATH_TO_CSV_SENSOR_INVERTERS[1]) \
+        and os.path.exists(PATH_TO_CSV_SENSOR_INVERTERS[2]):
     while True:
         try:
             fileObj = open(JOB_SCHEDULE[count][0], 'a')
@@ -186,7 +185,6 @@ if os.path.exists(PATH_TO_CSV_SENSOR_AGGREGATED) \
                 if count > 3:
                     break
         time.sleep(2)
-    sys.exit(1)
 else:
     print(Fore.RED, 'One of path not exist', Fore.RESET)
     sys.exit(0)

@@ -7,5 +7,4 @@ def connectionObject():
     return timeSeries
 
 timeSeries = connectionObject()
-print(timeSeries)
 

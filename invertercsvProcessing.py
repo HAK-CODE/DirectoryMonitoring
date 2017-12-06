@@ -22,9 +22,7 @@ inverter csv. It takes two arguments
 #PATHS FOR CSV's
 #-------------------------------------------------------------------------------------------------
 PATH_TO_CSV_INVERTER_AGGREGATED = ConfigPaths.config['hak.aggregated.csv']['INVERTER_AGGREGATED_CSV']
-PATH_TO_CSV_INVERTER_1 = ConfigPaths.config['hak.inverters']['INVERTER_1']
-PATH_TO_CSV_INVERTER_2 = ConfigPaths.config['hak.inverters']['INVERTER_2']
-PATH_TO_CSV_INVERTER_3 = ConfigPaths.config['hak.inverters']['INVERTER_3']
+PATH_TO_CSV_INVERTERS = sorted(list(dict(ConfigPaths.config.items('hak.inverters')).values()))
 PATH_OF_JSON_FILE = sys.argv[1]
 #-------------------------------------------------------------------------------------------------
 
@@ -71,13 +69,13 @@ with open("Config/Tags.csv", "r") as file:
 tag = [t.replace('\n','') for t in tag[-12:]]
 df_1.set_index(4)
 
-JOB_SCHEDULE = [[PATH_TO_CSV_INVERTER_AGGREGATED, df],[PATH_TO_CSV_INVERTER_1, df_1], [PATH_TO_CSV_INVERTER_2, df_2], [PATH_TO_CSV_INVERTER_3, df_3]]
+JOB_SCHEDULE = [[PATH_TO_CSV_INVERTER_AGGREGATED, df],[PATH_TO_CSV_INVERTERS[0], df_1], [PATH_TO_CSV_INVERTERS[1], df_2], [PATH_TO_CSV_INVERTERS[2], df_3]]
 fileObj = None
 count = 0
 if os.path.exists(PATH_TO_CSV_INVERTER_AGGREGATED) \
-            and os.path.exists(PATH_TO_CSV_INVERTER_1) \
-            and os.path.exists(PATH_TO_CSV_INVERTER_2) \
-            and os.path.exists(PATH_TO_CSV_INVERTER_3):
+            and os.path.exists(PATH_TO_CSV_INVERTERS[0]) \
+            and os.path.exists(PATH_TO_CSV_INVERTERS[1]) \
+            and os.path.exists(PATH_TO_CSV_INVERTERS[2]):
     while True:
         try:
             fileObj = open(JOB_SCHEDULE[count][0], 'a')
