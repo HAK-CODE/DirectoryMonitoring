@@ -11,6 +11,7 @@ import time
 import os
 from Config import ConfigPaths, predixConnection
 from colorama import Fore
+from db_test import *
 
 '''
 This file is used to process inverter file and distribute data to particular
@@ -62,6 +63,28 @@ for row in df.iterrows():
 df_1 = pd.DataFrame(rows[0]).transpose()
 df_2 = pd.DataFrame(rows[1]).transpose()
 df_3 = pd.DataFrame(rows[2]).transpose()
+# ---------------------------------
+# new dataframe for timescale DB
+df_in1 = pd.DataFrame(rows[0]).transpose()
+df_in2 = pd.DataFrame(rows[1]).transpose()
+df_in3 = pd.DataFrame(rows[2]).transpose()
+
+df_in1['inverter_id'] = 1
+df_in1.columns = ['day_energy', 'pac', 'total_energy', 'year_energy', 'time', 'inverter_id']
+df_in2['inverter_id'] = 2
+df_in2.columns = ['day_energy', 'pac', 'total_energy', 'year_energy', 'time', 'inverter_id']
+df_in3['inverter_id'] = 3
+df_in3.columns = ['day_energy', 'pac', 'total_energy', 'year_energy', 'time', 'inverter_id']
+
+df_list = [df_in1, df_in2, df_in3]
+
+df_final = pd.concat(df_list)
+df_final.set_index('inverter_id', inplace=True)
+df_final['site_id'] = 1
+db = DB_CLASS()
+db.savetable(df_final, "inverter")
+
+#-------------------------------------------------------------------
 
 df_1.to_csv('./DATA FOR BOKEH/data.csv', header=False)
 

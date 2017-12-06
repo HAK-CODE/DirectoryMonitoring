@@ -12,6 +12,7 @@ import os
 import datetime
 from Config import ConfigPaths, predixConnection
 from colorama import Fore
+from db_test import *
 
 def CheckOldData():
     try:
@@ -126,6 +127,35 @@ df_s1 = pd.DataFrame.from_records([SENSOR_INDIVIDUAL_1], index='10')
 df_s2 = pd.DataFrame.from_records([SENSOR_INDIVIDUAL_2], index='20')
 df_s3 = pd.DataFrame.from_records([SENSOR_INDIVIDUAL_3], index='30')
 df_list = [df_s1, df_s2, df_s3]
+# ---------------------------------------------------
+# new dataframe for time scale DB
+df_new1 = pd.DataFrame.from_records([SENSOR_INDIVIDUAL_1])
+df_new2 = pd.DataFrame.from_records([SENSOR_INDIVIDUAL_2])
+df_new3 = pd.DataFrame.from_records([SENSOR_INDIVIDUAL_3])
+
+
+df_new1['inverter_id'] = 1
+df_new1.columns = ['Internal_Temp','ambient', 'solar', 'wind', 'timestamp', 'inverter_id']
+
+
+
+df_new2['inverter_id'] = 2
+df_new2.columns = ['Internal_Temp','ambient', 'solar', 'wind', 'timestamp', 'inverter_id']
+
+
+
+df_new3['inverter_id'] = 3
+df_new3.columns = ['Internal_Temp','ambient', 'solar', 'wind', 'timestamp', 'inverter_id']
+
+
+df_list = [df_new1, df_new2, df_new3]
+df_final = pd.concat(df_list)
+df_final.set_index('inverter_id', inplace=True)
+df_final['site_id'] = 1
+db = DB_CLASS()
+db.savetable(df_final, "site_sensor")
+
+# -------------------------------------------------------------
 
 # Below code consist dataframe push for predix
 #-------------------------------------------------------------------------------------------------
