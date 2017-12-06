@@ -9,14 +9,9 @@ import pandas as pd
 import sys
 import time
 import os
-import predix
 import datetime
-import predix.data.timeseries
-from Config import ConfigPaths
+from Config import ConfigPaths, predixConnection
 from colorama import Fore
-
-app = predix.app.Manifest('./Config/manifest.yml')
-timeSeries =app.get_timeseries()
 
 def CheckOldData():
     try:
@@ -24,13 +19,14 @@ def CheckOldData():
             lines = file.readlines()
         for i in lines:
             data=i.split(";")
-            timeSeries.queue(data[0], value=data[1], timestamp=data[2])
-            timeSeries.send()
+            predixConnection.timeSeries.queue(data[0], value=data[1], timestamp=data[2].replace('\n',''))
+            predixConnection.timeSeries.send()
             print(data)
         os.remove("DefaultDataStore/Default_Store.csv")
     except Exception:
         print ("No Internet :(")
         print ("Old Data Not Found! :)")
+
 
 '''
 1 argument is for CSV FILE DEFINED in FILE
@@ -46,7 +42,6 @@ PATH_OF_JSON_FILE = sys.argv[1]
 #-------------------------------------------------------------------------------------------------
 
 
-
 if PATH_OF_JSON_FILE == '':
     print(Fore.YELLOW,'PATH TO JSON FILE NOT DEFINED', Fore.RESET)
     sys.exit(1)
@@ -56,12 +51,14 @@ if PATH_OF_JSON_FILE == '':
 #-------------------------------------------------------------------------------------------------
 data = json.load(open(PATH_OF_JSON_FILE, mode='r', encoding='utf-8', errors='ignore'))
 
+
 '''
 JS file consist data in following form
 Invert 1 = |0 Internal| |1 Ambient| |2 Solar| |4 Wind|
 Invert 2 = |0 Internal|
 Invert 3 = |0 Internal|
 '''
+
 
 # DATA DICTIONARY that is used to whole dataframe for aggregated file
 #-------------------------------------------------------------------------------------------------
@@ -79,6 +76,7 @@ parser_tag = ['1', '2', '3']
 SENSOR_11 = None
 SENSOR_12 = None
 SENSOR_14 = None
+
 
 # Loop through the parser
 #-------------------------------------------------------------------------------------------------
@@ -152,13 +150,14 @@ for i in df_for_predix:
     for j in range(len(list(i))):
         tag[k] = tag[k].replace("\n","")
         try:
-            timeSeries.queue(tag[k], value=str(i.iloc[0, j]), timestamp=unixTimeStamp * 1000, quality=3)
-            timeSeries.send()
+            predixConnection.timeSeries.queue(tag[k], value=str(i.iloc[0, j]), timestamp=unixTimeStamp * 1000, quality=3)
+            predixConnection.timeSeries.send()
+            print(tag[k], str(i.iloc[0, j]))
         except Exception:
             print("No internet")
             with open("DefaultDataStore/Default_Store.csv", "a") as file:
                 file.write(tag[k] + ";" + str(i.iloc[0,j]) + ";" + str(unixTimeStamp * 1000) + "\n")
-        print(i.iloc[0, j], tag[k])
+                print(i.iloc[0, j], tag[k])
         k=k+1
 #-------------------------------------------------------------------------------------------------
 

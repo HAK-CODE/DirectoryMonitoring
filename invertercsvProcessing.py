@@ -9,7 +9,7 @@ import pandas as pd
 import sys
 import time
 import os
-from Config import ConfigPaths
+from Config import ConfigPaths, predixConnection
 from colorama import Fore
 
 '''
@@ -62,6 +62,14 @@ for row in df.iterrows():
 df_1 = pd.DataFrame(rows[0]).transpose()
 df_2 = pd.DataFrame(rows[1]).transpose()
 df_3 = pd.DataFrame(rows[2]).transpose()
+
+df_1.to_csv('./DATA FOR BOKEH/data.csv', header=False)
+
+with open("Config/Tags.csv", "r") as file:
+    tag = file.readlines()
+
+tag = [t.replace('\n','') for t in tag[-12:]]
+df_1.set_index(4)
 
 JOB_SCHEDULE = [[PATH_TO_CSV_INVERTER_AGGREGATED, df],[PATH_TO_CSV_INVERTER_1, df_1], [PATH_TO_CSV_INVERTER_2, df_2], [PATH_TO_CSV_INVERTER_3, df_3]]
 fileObj = None
