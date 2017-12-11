@@ -13,6 +13,7 @@ import   configparser
 import   subprocess
 from     colorama import Fore
 from subprocess import DEVNULL
+import psutil
 
 '''
 An event handler that use to listen triggered events from FileSystemEvent
@@ -88,7 +89,7 @@ class Handler(FileSystemEventHandler):
                 print("SIZE  : ", FILE.FILEBASIC()[4], "BYTES")
                 print('---------------------------------------------------------------------------------',Fore.RESET)
                 CHG_PATH = '\"' + event.src_path + '\"' if ' ' in event.src_path else event.src_path
-                subprocess.Popen(['python3','checkFilerelease.py',CHG_PATH])
+                subprocess.call(['python3','checkFilerelease.py',CHG_PATH])
 
 
     def send_info(self, data, DIR=False):

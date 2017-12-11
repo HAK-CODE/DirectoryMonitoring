@@ -106,6 +106,7 @@ if os.path.exists(filepath):
                 time.sleep(5)
         else:
             time.sleep(5)
+    print('exit')
     sys.exit(1)
 else:
     print('file path not exist', filepath)
