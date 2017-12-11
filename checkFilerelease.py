@@ -71,16 +71,10 @@ def update_csv(path, timeOfFile, pathName):
 #---------------------------------------------------------------------------------------------
 if os.path.exists(filepath):
     while True:
-        try:
-            fileObj = open(filepath, 'a')
-            print('trying to open file',filepath)
-            if fileObj:
-                print(Fore.GREEN,'file not locked',filepath,Fore.RESET)
-        except OSError:
-            print(Fore.GREEN,'file is locked',filepath,Fore.RESET)
-        finally:
-            if fileObj:
-                fileObj.close()
+        if os.path.getsize(filepath) != 0:
+            print('trying to open file', filepath)
+            if os.path.isfile(filepath):
+                print(Fore.GREEN, 'file not locked', filepath, Fore.RESET)
 
                 # Convert file from .js to .json and get file creation time
                 newname = filepath.replace('.js', '.json') if '.json' not in filepath else filepath
@@ -101,16 +95,19 @@ if os.path.exists(filepath):
                 elif ntpath.basename(newname).startswith('METER'):
                     copy(newname, paths_list[4])
                     update_csv(csv_list[4], filectime, paths_list[4] + '/' + ntpath.basename(newname))
-                    subprocess.Popen(['python3', 'metercsvProcessing.py', paths_list[4]+'/'+ntpath.basename(newname)])
+                    subprocess.Popen(['python3', 'metercsvProcessing.py', paths_list[4] + '/' + ntpath.basename(newname)])
                 elif ntpath.basename(newname).startswith('INVERTER'):
                     copy(newname, paths_list[1])
                     update_csv(csv_list[1], filectime, paths_list[1] + '/' + ntpath.basename(newname))
-                    subprocess.Popen(['python3', 'invertercsvProcessing.py', paths_list[1]+'/'+ntpath.basename(newname)])
+                    subprocess.Popen(['python3', 'invertercsvProcessing.py', paths_list[1] + '/' + ntpath.basename(newname)])
                 os.remove(newname)
                 break
-        time.sleep(2)
+            else:
+                time.sleep(5)
+        else:
+            time.sleep(5)
     sys.exit(1)
 else:
-   print('file path not exist', filepath)
-   sys.exit(0)
+    print('file path not exist', filepath)
+    sys.exit(0)
 #----------------------------------------------------------------------------------------------
