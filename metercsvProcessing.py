@@ -68,7 +68,7 @@ if os.path.exists(PATH_TO_CSV_METER_AGGREGATED):
                 fileObj.close()
                 print(Fore.GREEN, 'written and closed', fileObj.name, Fore.RESET)
                 break
-        time.sleep(2)
+        time.sleep(1)
     sys.exit(1)
 else:
     print(Fore.RED,'file path not exist', PATH_TO_CSV_METER_AGGREGATED, Fore.RESET)

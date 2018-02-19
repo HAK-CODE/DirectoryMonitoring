@@ -12,12 +12,13 @@ import os
 import subprocess
 from Config import ConfigPaths
 from subprocess import DEVNULL
+import psutil
 headers = ['File Name', 'Timestamp']
-
+timeSleep = 5
 
 #Directory path to get files
 #--------------------------------------------------------------------------------------------
-directory_path = '/home/inbox-dih/Desktop/REON/DC'
+directory_path = '/home/reon/ftp/files/files'
 #--------------------------------------------------------------------------------------------
 
 
@@ -58,14 +59,14 @@ def update_csv(path, timeoffile, pathName):
             if csvfile:
                 csvfile.close()
                 break
-        time.sleep(3)
+        time.sleep(1)
 #--------------------------------------------------------------------------------------------
 
 
 #Start a independent process
 #--------------------------------------------------------------------------------------------
 def open_process(fileName, PATH):
-    subprocess.Popen(['python3', fileName, PATH])
+    subprocess.call(['python3', fileName, PATH])
 #--------------------------------------------------------------------------------------------
 
 
@@ -77,7 +78,7 @@ for paths in paths_list:
         sys.exit(1)
 #--------------------------------------------------------------------------------------------
 
-
+counter=0
 countFiles = [0, 0, 0, 0, 0]
 for file in os.listdir(directory_path):
     fullPath = os.path.join(directory_path, file)
@@ -109,6 +110,19 @@ for file in os.listdir(directory_path):
         open_process('invertercsvProcessing.py', paths_list[1] + '/' + ntpath.basename(newname))
         update_csv(csv_list[1], filectime, paths_list[1]+'/'+ntpath.basename(newname))
     os.remove(newname)
+    ''' 
+    if psutil.virtual_memory().percent > 50:
+        timeSleep += 20
+        print('timeSleep ', str(timeSleep))
+        time.sleep(timeSleep)
+    if psutil.virtual_memory().percent < 25:
+        if timeSleep <= 4:
+            timeSleep = 4
+        else:
+            timeSleep -= 4
+            time.sleep(timeSleep)
+        print('timeSleep ', str(timeSleep))
+    '''    
 #--------------------------------------------------------------------------------------------
 
 

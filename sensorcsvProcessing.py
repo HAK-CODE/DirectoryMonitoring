@@ -12,7 +12,7 @@ import os
 import datetime
 from Config import ConfigPaths, predixConnection
 from colorama import Fore
-
+#from DB import *
 
 def CheckOldData():
     try:
@@ -126,6 +126,36 @@ df_s2 = pd.DataFrame.from_records([SENSOR_INDIVIDUAL_2], index='20')
 df_s3 = pd.DataFrame.from_records([SENSOR_INDIVIDUAL_3], index='30')
 df_list = [df_s1, df_s2, df_s3]
 
+# ---------------------------------------------------
+# new dataframe for time scale DB
+'''
+df_new1 = pd.DataFrame.from_records([SENSOR_INDIVIDUAL_1])
+df_new2 = pd.DataFrame.from_records([SENSOR_INDIVIDUAL_2])
+df_new3 = pd.DataFrame.from_records([SENSOR_INDIVIDUAL_3])
+
+
+df_new1['inverter_id'] = 1
+df_new1.columns = ['Internal_Temp','ambient', 'solar', 'wind', 'timestamp', 'inverter_id']
+
+
+
+df_new2['inverter_id'] = 2
+df_new2.columns = ['Internal_Temp','ambient', 'solar', 'wind', 'timestamp', 'inverter_id']
+
+
+
+df_new3['inverter_id'] = 3
+df_new3.columns = ['Internal_Temp','ambient', 'solar', 'wind', 'timestamp', 'inverter_id']
+
+
+df_list = [df_new1, df_new2, df_new3]
+df_final = pd.concat(df_list)
+df_final.set_index('inverter_id', inplace=True)
+df_final['site_id'] = 1
+db = DB_CLASS()
+db.savetable(df_final, "site_sensor")
+'''
+# -------------------------------------------------------------
 # Below code consist dataframe push for predix
 #-------------------------------------------------------------------------------------------------
 
@@ -137,7 +167,7 @@ df_s3_p = pd.DataFrame.from_records([SENSOR_INDIVIDUAL_3], index='Timestamp')
 
 # data frames list for predix
 df_for_predix = [df_s1_p, df_s2_p, df_s3_p]
-with open("Config/Tags.csv", "r") as file:
+with open("Config/Tags_Sensor.csv", "r") as file:
     tag = file.readlines()
 
 # Loop through dataframes for predix
@@ -146,10 +176,11 @@ for i in df_for_predix:
     timeStamp = str(i.index[0]).replace('T', ' ')
     timeStamp = timeStamp.replace('+05:00', '')
     unixTimeStamp = int(time.mktime(datetime.datetime.strptime(timeStamp, "%Y-%m-%d %H:%M:%S").timetuple()))
+    unixTimeStamp=((unixTimeStamp * 1000) - 18000000)
     for j in range(len(list(i))):
         tag[k] = tag[k].replace("\n","")
         try:
-            predixConnection.timeSeries.queue(tag[k], value=str(i.iloc[0, j]), timestamp=unixTimeStamp * 1000, quality=3)
+            predixConnection.timeSeries.queue(tag[k], value=str(i.iloc[0, j]), timestamp=unixTimeStamp , quality=3)
             predixConnection.timeSeries.send()
             print(tag[k], str(i.iloc[0, j]))
         except Exception:
@@ -184,7 +215,7 @@ if os.path.exists(PATH_TO_CSV_SENSOR_AGGREGATED) \
                 count += 1
                 if count > 3:
                     break
-        time.sleep(2)
+        time.sleep(1)
 else:
     print(Fore.RED, 'One of path not exist', Fore.RESET)
     sys.exit(0)

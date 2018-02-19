@@ -63,7 +63,7 @@ def update_csv(path, timeOfFile, pathName):
                 print(Fore.GREEN,'CSV file written and closed', csvFile.name, Fore.RESET)
                 csvFile.close()
                 break
-        time.sleep(2)
+        time.sleep(1)
 # --------------------------------------------------------------------------------------------
 
 
@@ -103,9 +103,9 @@ if os.path.exists(filepath):
                 os.remove(newname)
                 break
             else:
-                time.sleep(5)
+                time.sleep(1)
         else:
-            time.sleep(5)
+            time.sleep(1)
     print('exit')
     sys.exit(1)
 else:
