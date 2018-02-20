@@ -184,7 +184,9 @@ if os.path.exists(PATH_TO_CSV_SENSOR_AGGREGATED) \
                 count += 1
                 if count > 3:
                     break
-        time.sleep(2)
+    #while True:
+    #    time.sleep(1)
+    #    print(predixConnection.timeSeries == None)
 else:
     print(Fore.RED, 'One of path not exist', Fore.RESET)
     sys.exit(0)

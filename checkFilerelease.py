@@ -99,13 +99,16 @@ if os.path.exists(filepath):
                 elif ntpath.basename(newname).startswith('INVERTER'):
                     copy(newname, paths_list[1])
                     update_csv(csv_list[1], filectime, paths_list[1] + '/' + ntpath.basename(newname))
-                    subprocess.Popen(['python3', 'invertercsvProcessing.py', paths_list[1] + '/' + ntpath.basename(newname)])
+                    subprocess.Popen(['python3' , 'invertercsvProcessing.py', paths_list[1] + '/' + ntpath.basename(newname)])
+                elif 'Z_UMTS_log' in newname:
+                    copy(newname, paths_list[5])
+                    subprocess.Popen(['python3', 'zumtscsvProcessing.py', paths_list[5] + '/' + ntpath.basename(newname)])
                 os.remove(newname)
                 break
             else:
-                time.sleep(5)
+                time.sleep(1)
         else:
-            time.sleep(5)
+            time.sleep(1)
     print('exit')
     sys.exit(1)
 else:
