@@ -43,8 +43,6 @@ for paths in paths_list:
     if not os.path.isdir(paths):
         print(Fore.RED, 'Provided directory for some variable not exist ' + paths, Fore.RESET)
         sys.exit(0)
-
-
 # --------------------------------------------------------------------------------------------
 
 
@@ -69,8 +67,6 @@ def update_csv(path, timeOfFile, pathName):
                 csvFile.close()
                 break
         time.sleep(2)
-
-
 # --------------------------------------------------------------------------------------------
 
 
