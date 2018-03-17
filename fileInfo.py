@@ -1,7 +1,7 @@
-'''
+"""
 author: HAK
 time  : 10:00 PM, 28/10/2017
-'''
+"""
 
 import os
 import time
@@ -10,8 +10,11 @@ import time
 class FILE_INFO is collection of functions applied 
 to get information and meta data of files.
 '''
+
+
 class FILE_INFO:
     FILE_PATH = ""
+
     def __init__(self, FILE_PATH):
         self.FILE_PATH = FILE_PATH
 

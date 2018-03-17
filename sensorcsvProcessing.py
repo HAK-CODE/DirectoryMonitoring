@@ -1,7 +1,7 @@
-'''
+"""
 author: HAK
 time  : 02:00 AM, 07/11/2017
-'''
+"""
 
 import json
 import numpy as np
@@ -16,40 +16,38 @@ from colorama import Fore
 
 def CheckOldData():
     try:
-        with open("DefaultDataStore/Default_Store.csv" , "r") as file:
+        with open("DefaultDataStore/Default_Store.csv", "r") as file:
             lines = file.readlines()
         for i in lines:
-            data=i.split(";")
-            predixConnection.timeSeries.queue(data[0], value=data[1], timestamp=data[2].replace('\n',''))
+            data = i.split(";")
+            predixConnection.timeSeries.queue(data[0], value=data[1], timestamp=data[2].replace('\n', ''))
             predixConnection.timeSeries.send()
             print(data)
         os.remove("DefaultDataStore/Default_Store.csv")
     except Exception:
-        print ("No Internet :(")
-        print ("Old Data Not Found! :)")
+        print("No Internet :(")
+        print("Old Data Not Found! :)")
 
 
 '''
 1 argument is for CSV FILE DEFINED in FILE
 2 argument is for JSON FILE
 '''
-#PATHS FOR CSV's
-#-------------------------------------------------------------------------------------------------
+# PATHS FOR CSV's
+# -------------------------------------------------------------------------------------------------
 PATH_TO_CSV_SENSOR_AGGREGATED = ConfigPaths.config['hak.aggregated.csv']['SENSORS_AGGREGATED_CSV']
 PATH_TO_CSV_SENSOR_INVERTERS = sorted(list(dict(ConfigPaths.config.items('hak.sensors')).values()))
 PATH_OF_JSON_FILE = sys.argv[1]
-#-------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------
 
 
 if PATH_OF_JSON_FILE == '':
-    print(Fore.YELLOW,'PATH TO JSON FILE NOT DEFINED', Fore.RESET)
+    print(Fore.YELLOW, 'PATH TO JSON FILE NOT DEFINED', Fore.RESET)
     sys.exit(1)
 
-
 # JSON file for parsing data
-#-------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------
 data = json.load(open(PATH_OF_JSON_FILE, mode='r', encoding='utf-8', errors='ignore'))
-
 
 '''
 JS file consist data in following form
@@ -58,15 +56,13 @@ Invert 2 = |0 Internal|
 Invert 3 = |0 Internal|
 '''
 
-
 # DATA DICTIONARY that is used to whole dataframe for aggregated file
-#-------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------
 DATA_DICT = {'10': 0, '11': 0, '12': 0, '14': 0, '20': 0, '30': 0}
-
 
 # SENSOR DICTIONARIES for individual sensor as only internal temperature differ and others remain
 # same like ambient, wind and solar
-#-------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------
 SENSOR_INDIVIDUAL_1 = {'10': 0, '11': 0, '12': 0, '14': 0}
 SENSOR_INDIVIDUAL_2 = {'20': 0, '21': 0, '22': 0, '24': 0}
 SENSOR_INDIVIDUAL_3 = {'30': 0, '31': 0, '32': 0, '34': 0}
@@ -76,9 +72,8 @@ SENSOR_11 = None
 SENSOR_12 = None
 SENSOR_14 = None
 
-
 # Loop through the parser
-#-------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------
 for items in parser_tag:
     # Get the data items from json file
     json_data = data['Body'][items]
@@ -111,14 +106,13 @@ for items in parser_tag:
                 DATA_DICT[dict_key] = np.nan
     else:
         DATA_DICT[dict_key] = np.nan
-#-------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------
 
 
 DATA_DICT['Timestamp'] = data['Head']['Timestamp']
 SENSOR_INDIVIDUAL_1['Timestamp'] = data['Head']['Timestamp']
 SENSOR_INDIVIDUAL_2['Timestamp'] = data['Head']['Timestamp']
 SENSOR_INDIVIDUAL_3['Timestamp'] = data['Head']['Timestamp']
-
 
 df = pd.DataFrame.from_records([DATA_DICT], index='10')
 df_s1 = pd.DataFrame.from_records([SENSOR_INDIVIDUAL_1], index='10')
@@ -127,7 +121,7 @@ df_s3 = pd.DataFrame.from_records([SENSOR_INDIVIDUAL_3], index='30')
 df_list = [df_s1, df_s2, df_s3]
 
 # Below code consist dataframe push for predix
-#-------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------
 
 # Check for old data that havent been pushed due to unavaible service or network issues
 CheckOldData()
@@ -141,27 +135,29 @@ with open("Config/Tags.csv", "r") as file:
     tag = file.readlines()
 
 # Loop through dataframes for predix
-k=0
+k = 0
 for i in df_for_predix:
     timeStamp = str(i.index[0]).replace('T', ' ')
     timeStamp = timeStamp.replace('+05:00', '')
     unixTimeStamp = int(time.mktime(datetime.datetime.strptime(timeStamp, "%Y-%m-%d %H:%M:%S").timetuple()))
     for j in range(len(list(i))):
-        tag[k] = tag[k].replace("\n","")
+        tag[k] = tag[k].replace("\n", "")
         try:
-            predixConnection.timeSeries.queue(tag[k], value=str(i.iloc[0, j]), timestamp=unixTimeStamp * 1000, quality=3)
+            predixConnection.timeSeries.queue(tag[k], value=str(i.iloc[0, j]), timestamp=unixTimeStamp * 1000,
+                                              quality=3)
             predixConnection.timeSeries.send()
             print(tag[k], str(i.iloc[0, j]))
         except Exception:
             print("No internet")
             with open("DefaultDataStore/Default_Store.csv", "a") as file:
-                file.write(tag[k] + ";" + str(i.iloc[0,j]) + ";" + str(unixTimeStamp * 1000) + "\n")
+                file.write(tag[k] + ";" + str(i.iloc[0, j]) + ";" + str(unixTimeStamp * 1000) + "\n")
                 print(i.iloc[0, j], tag[k])
-        k=k+1
-#-------------------------------------------------------------------------------------------------
+        k = k + 1
+# -------------------------------------------------------------------------------------------------
 
 
-JOB_SCHEDULE = [[PATH_TO_CSV_SENSOR_AGGREGATED, df], [PATH_TO_CSV_SENSOR_INVERTERS[0], df_s1], [PATH_TO_CSV_SENSOR_INVERTERS[1], df_s2], [PATH_TO_CSV_SENSOR_INVERTERS[2], df_s3]]
+JOB_SCHEDULE = [[PATH_TO_CSV_SENSOR_AGGREGATED, df], [PATH_TO_CSV_SENSOR_INVERTERS[0], df_s1],
+                [PATH_TO_CSV_SENSOR_INVERTERS[1], df_s2], [PATH_TO_CSV_SENSOR_INVERTERS[2], df_s3]]
 fileObj = None
 count = 0
 if os.path.exists(PATH_TO_CSV_SENSOR_AGGREGATED) \
@@ -184,7 +180,7 @@ if os.path.exists(PATH_TO_CSV_SENSOR_AGGREGATED) \
                 count += 1
                 if count > 3:
                     break
-    #while True:
+    # while True:
     #    time.sleep(1)
     #    print(predixConnection.timeSeries == None)
 else:
